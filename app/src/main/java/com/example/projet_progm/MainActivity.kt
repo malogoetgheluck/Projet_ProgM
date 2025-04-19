@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
     }
 
     fun goToGame(view: View?) {
-        val intent = Intent(this, SearchTheChest::class.java)
+        val intent = Intent(this, FindTheObject::class.java)
         startActivity(intent)
     }
 }

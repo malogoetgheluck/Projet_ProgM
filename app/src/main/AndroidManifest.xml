@@ -29,6 +29,12 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.Projet_ProgM">
         </activity>
+        <activity
+            android:name=".FindTheObject"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Projet_ProgM">
+        </activity>
     </application>
 
 </manifest>
