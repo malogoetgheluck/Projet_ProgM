@@ -1,9 +1,12 @@
 package com.example.projet_progm
 
 
+import android.app.Activity
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
@@ -24,7 +27,18 @@ class QuestionnaireGameActivity : ComponentActivity() {
     )
 
     private var currentQuestionIndex = 0
-    private var score = 0
+    private var score: Long = 0
+
+    //To quit the game with a little delay
+    private val handler = Handler(Looper.getMainLooper())
+    private val endGame = object : Runnable {
+        override fun run() {
+            val resultIntent = Intent()
+            resultIntent.putExtra("score", score)
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +88,8 @@ class QuestionnaireGameActivity : ComponentActivity() {
     private fun endGame() {
         findViewById<TextView>(R.id.questionText).text = "Jeu terminé! Score: $score"
         findViewById<LinearLayout>(R.id.answersLayout).visibility = View.GONE
+
+        handler.postDelayed(endGame, 3000)
     }
 
     data class Question(

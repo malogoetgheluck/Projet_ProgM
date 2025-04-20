@@ -51,7 +51,9 @@ class ActivitySoloMode : ComponentActivity(){
         val activityMap = mapOf(
             "FindTheObject" to ActivityFindTheObject::class.java,
             "SearchTheChest" to ActivitySearchTheChest::class.java,
-            "EnigmeActivity" to ActivitySearchTheChest::class.java,
+            "EnigmeActivity" to EnigmeActivity::class.java,
+            "Player_VS_Enemy" to Player_VS_Enemy::class.java,
+            "QuestionnaireGameActivity" to QuestionnaireGameActivity::class.java,
         )
 
         lifecycleScope.launch {
