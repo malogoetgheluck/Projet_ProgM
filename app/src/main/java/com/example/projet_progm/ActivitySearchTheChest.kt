@@ -1,8 +1,12 @@
 package com.example.projet_progm
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -14,10 +18,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import java.lang.Math.toDegrees
+import java.lang.Thread.sleep
 import kotlin.math.abs
 import kotlin.math.atan2
 
-class SearchTheChest : ComponentActivity() {
+class ActivitySearchTheChest : ComponentActivity() {
 
     private var startX = 0f
     private var startY = 0f
@@ -34,6 +39,17 @@ class SearchTheChest : ComponentActivity() {
     private lateinit var scoreLayout : FrameLayout;
 
     private var loosed = false
+
+    //To quit the game with a little delay
+    private val handler = Handler(Looper.getMainLooper())
+    private val endGame = object : Runnable {
+        override fun run() {
+            val resultIntent = Intent()
+            resultIntent.putExtra("score", score)
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,6 +152,10 @@ class SearchTheChest : ComponentActivity() {
             score = 0
         }
         scoreTextView.text = "Score: "+score
+
+        Log.d("DEBUG", "The score is $score")
+
+        handler.postDelayed(endGame, 5000)
     }
 
     private fun startTimer() {

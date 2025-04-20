@@ -1,25 +1,23 @@
 package com.example.projet_progm
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import java.lang.Math.toDegrees
-import kotlin.math.abs
-import kotlin.math.atan2
+import java.lang.Thread.sleep
 
-class FindTheObject : ComponentActivity() {
+class ActivityFindTheObject : ComponentActivity() {
 
     private var startX = 0f
     private var startY = 0f
@@ -55,6 +53,17 @@ class FindTheObject : ComponentActivity() {
 
             // schedule the next update
             handler.postDelayed(this, UPDATE_MILLIS)
+        }
+    }
+
+    //To quit the game with a little delay
+    private val endGame = object : Runnable {
+        override fun run() {
+            val resultIntent = Intent().apply {
+                putExtra("score", score)
+            }
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
         }
     }
 
@@ -169,6 +178,8 @@ class FindTheObject : ComponentActivity() {
             score = 0
         }
         scoreTextView.text = "Score: "+score
+
+        handler.postDelayed(endGame, 5000)
     }
 
     private fun startTimer(time: Long = totalTime) {
