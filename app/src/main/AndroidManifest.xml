@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Projet_ProgM"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".ActivityHomePage"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Projet_ProgM">
@@ -22,6 +22,24 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ActivitySoloMode"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Projet_ProgM">
+        </activity>
+        <activity
+            android:name=".ActivitySearchTheChest"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Projet_ProgM">
+        </activity>
+        <activity
+            android:name=".ActivityFindTheObject"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Projet_ProgM">
         </activity>
     </application>
 
