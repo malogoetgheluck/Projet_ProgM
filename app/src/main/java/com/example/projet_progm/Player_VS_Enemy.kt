@@ -1,12 +1,16 @@
 package com.example.projet_progm
 
 
+import android.app.Activity
+import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.ImageView
 import android.widget.Toast
 import kotlin.math.max
@@ -27,7 +31,18 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
     private var lastHitEnemy2 = 0L
     private val hitCooldown = 1000L // 1 seconde en millisecondes
 
-    private var score = 0
+    private var score: Long = 0
+
+    //To quit the game with a little delay
+    private val handler = Handler(Looper.getMainLooper())
+    private val endGame = object : Runnable {
+        override fun run() {
+            val resultIntent = Intent()
+            resultIntent.putExtra("score", score)
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,7 +142,7 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
 
         if (isColliding(player, door)) {
             Toast.makeText(this, "Score final : $score", Toast.LENGTH_LONG).show()
-            finish()
+            handler.postDelayed(endGame, 3000)
         }
     }
     private var enemy1Direction = 1

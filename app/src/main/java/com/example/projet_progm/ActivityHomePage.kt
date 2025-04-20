@@ -37,6 +37,12 @@ class ActivityHomePage : ComponentActivity() {
             newGame = Games(uid = 3, gameName = "Riddles", gameActivity = "EnigmeActivity")
             userDao.insertAll(newGame)
 
+            newGame = Games(uid = 4, gameName = "Dodge the enemies", gameActivity = "Player_VS_Enemy")
+            userDao.insertAll(newGame)
+
+            newGame = Games(uid = 5, gameName = "Questions", gameActivity = "QuestionnaireGameActivity")
+            userDao.insertAll(newGame)
+
             // Optional: read back users
             val users = userDao.getAll()
             users.forEach {
