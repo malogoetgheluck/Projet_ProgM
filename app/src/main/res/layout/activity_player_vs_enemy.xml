@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background"
+        android:scaleType="centerCrop" />
+    <!-- Joueur -->
+    <ImageView
+        android:id="@+id/player"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/player"
+        android:layout_margin="16dp"
+        android:layout_gravity="top|start" />
+
+    <ImageView
+        android:id="@+id/enemy1"
+        android:layout_width="69dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="250dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginRight="50dp"
+        android:src="@drawable/ennemi" />
+
+    <ImageView
+        android:id="@+id/enemy2"
+        android:layout_width="69dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="00dp"
+        android:layout_marginTop="300dp"
+        android:src="@drawable/ennemi" />
+
+    <ImageView
+        android:id="@+id/gift1"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="300dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginRight="50dp"
+        android:src="@drawable/gift" />
+
+    <ImageView
+        android:id="@+id/gift2"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="00dp"
+        android:layout_marginTop="380dp"
+        android:layout_marginRight="50dp"
+        android:src="@drawable/gift" />
+
+    <ImageView
+        android:id="@+id/door"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/door"
+        android:layout_marginTop="600dp"
+        android:layout_marginLeft="280dp"
+        />
+</FrameLayout>
