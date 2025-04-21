@@ -13,6 +13,9 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
 
@@ -142,6 +145,19 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
 
         if (isColliding(player, door)) {
             Toast.makeText(this, "Score final : $score", Toast.LENGTH_LONG).show()
+
+            val db = AppDatabase.getDatabase(applicationContext)
+            val dao = db.userDao()
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                val existingGame = dao.loadAllByIds(intArrayOf(4)).firstOrNull()
+                val newScore = score.toInt()
+
+                if (existingGame?.highScore == null || newScore > existingGame.highScore!!) {
+                    dao.updateHighScore(4, newScore)
+                }
+            }
+
             handler.postDelayed(endGame, 3000)
         }
     }

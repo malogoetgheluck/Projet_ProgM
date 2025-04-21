@@ -52,7 +52,8 @@
         android:layout_marginTop="45dp"
         android:text="Training mode"
         android:maxWidth="300dp"
-        android:minWidth="200dp"/>
+        android:minWidth="200dp"
+        android:onClick="goToTrainingGame"/>
 
     <Button
         android:id="@+id/button3"

@@ -15,6 +15,9 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.Thread.sleep
 
 class ActivityFindTheObject : ComponentActivity() {
@@ -178,6 +181,18 @@ class ActivityFindTheObject : ComponentActivity() {
             score = 0
         }
         scoreTextView.text = "Score: "+score
+
+        val db = AppDatabase.getDatabase(applicationContext)
+        val dao = db.userDao()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val existingGame = dao.loadAllByIds(intArrayOf(2)).firstOrNull()
+            val newScore = score.toInt()
+
+            if (existingGame?.highScore == null || newScore > existingGame.highScore!!) {
+                dao.updateHighScore(2, newScore)
+            }
+        }
 
         handler.postDelayed(endGame, 5000)
     }

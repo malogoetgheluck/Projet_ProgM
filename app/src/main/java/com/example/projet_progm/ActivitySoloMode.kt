@@ -54,6 +54,7 @@ class ActivitySoloMode : ComponentActivity(){
             "EnigmeActivity" to EnigmeActivity::class.java,
             "Player_VS_Enemy" to Player_VS_Enemy::class.java,
             "QuestionnaireGameActivity" to QuestionnaireGameActivity::class.java,
+            "MementoActivity" to ActivityMemento::class.java
         )
 
         lifecycleScope.launch {

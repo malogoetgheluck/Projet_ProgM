@@ -12,7 +12,10 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.projet_progm.QuestionnaireGameActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class EnigmeActivity : ComponentActivity() {
 
@@ -83,6 +86,18 @@ class EnigmeActivity : ComponentActivity() {
         android.os.Handler().postDelayed({
             finish()
         }, 3000)*/
+
+        val db = AppDatabase.getDatabase(applicationContext)
+        val dao = db.userDao()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val existingGame = dao.loadAllByIds(intArrayOf(3)).firstOrNull()
+            val newScore = score.toInt()
+
+            if (existingGame?.highScore == null || newScore > existingGame.highScore!!) {
+                dao.updateHighScore(3, newScore)
+            }
+        }
 
         handler.postDelayed(endGame, 3000)
     }

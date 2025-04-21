@@ -14,6 +14,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class QuestionnaireGameActivity : ComponentActivity() {
 
@@ -88,6 +91,18 @@ class QuestionnaireGameActivity : ComponentActivity() {
     private fun endGame() {
         findViewById<TextView>(R.id.questionText).text = "Jeu terminé! Score: $score"
         findViewById<LinearLayout>(R.id.answersLayout).visibility = View.GONE
+
+        val db = AppDatabase.getDatabase(applicationContext)
+        val dao = db.userDao()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val existingGame = dao.loadAllByIds(intArrayOf(5)).firstOrNull()
+            val newScore = score.toInt()
+
+            if (existingGame?.highScore == null || newScore > existingGame.highScore!!) {
+                dao.updateHighScore(5, newScore)
+            }
+        }
 
         handler.postDelayed(endGame, 3000)
     }
