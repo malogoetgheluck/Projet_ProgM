@@ -113,7 +113,7 @@ class QuestionnaireGameActivity : ComponentActivity() {
     private fun checkAnswer(selectedIndex: Int) {
         val question = shuffledQuestions[currentQuestionIndex]
         if (selectedIndex == question.correctAnswer) {
-            questionScore += 100
+            questionScore += 111
             toast?.cancel()
             toast = Toast.makeText(this, "Well-done ! Good answer", Toast.LENGTH_SHORT)
             toast?.show()

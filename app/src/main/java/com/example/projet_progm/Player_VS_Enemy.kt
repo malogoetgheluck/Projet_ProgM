@@ -7,12 +7,20 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import android.view.View
+import android.view.ViewTreeObserver
+import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,6 +28,14 @@ import kotlin.math.max
 import kotlin.math.min
 
 class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
+
+    private lateinit var scoreTextView: TextView
+    private lateinit var timerTextView: TextView
+    private lateinit var welldoneTextView: TextView
+    private var countDownTimer: CountDownTimer? = null
+    private val totalTime: Long = 30000 // 30 seconds
+
+    private lateinit var scoreLayout : FrameLayout;
 
     private lateinit var sensorManager: SensorManager
     private var accelerometer: Sensor? = null
@@ -30,11 +46,21 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
     private lateinit var enemy2: ImageView
     private lateinit var gift1: ImageView
     private lateinit var gift2: ImageView
+    private lateinit var gift3: ImageView
     private var lastHitEnemy1 = 0L
     private var lastHitEnemy2 = 0L
     private val hitCooldown = 1000L // 1 seconde en millisecondes
 
     private var score: Long = 0
+    private var multiplicateurScore: Double = 0.0
+
+    private var enemy1Direction = 0
+    private var enemy2Direction = 0
+
+    private var enemy1Positions = listOf(0,0)
+    private var enemy2Positions = listOf(0,0)
+
+    private var gameEnded = false
 
     //To quit the game with a little delay
     private val handler = Handler(Looper.getMainLooper())
@@ -44,6 +70,15 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
             resultIntent.putExtra("score", score)
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
+        }
+    }
+
+    private val runnable = object : Runnable {
+        override fun run() {
+            moveEnemies()
+
+            // schedule the next update
+            handler.postDelayed(this, 8)
         }
     }
 
@@ -62,8 +97,62 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
         enemy2 = findViewById(R.id.enemy2)
         gift1 = findViewById(R.id.gift1)
         gift2 = findViewById(R.id.gift2)
+        gift3 = findViewById(R.id.gift3)
 
-        moveEnemies()
+        enemy1.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                enemy1.viewTreeObserver.removeOnGlobalLayoutListener(this)
+
+                gift1.x = (100..resources.displayMetrics.widthPixels - enemy1.width - 100).random()
+                    .toFloat()
+                gift1.y =
+                    (800..resources.displayMetrics.heightPixels - enemy1.height - 100).random()
+                        .toFloat()
+                gift2.x = (100..resources.displayMetrics.widthPixels - enemy1.width - 100).random()
+                    .toFloat()
+                gift2.y =
+                    (800..resources.displayMetrics.heightPixels - enemy1.height - 100).random()
+                        .toFloat()
+                gift3.x = (100..resources.displayMetrics.widthPixels - enemy1.width - 100).random()
+                    .toFloat()
+                gift3.y =
+                    (800..resources.displayMetrics.heightPixels - enemy1.height - 100).random()
+                        .toFloat()
+
+                enemy1Positions = listOf(
+                    (100..resources.displayMetrics.widthPixels - enemy1.width - 100).random(),
+                    (600..resources.displayMetrics.heightPixels - enemy1.height - 200).random()
+                )
+
+                enemy1Direction = listOf(45, 135, 225, 315).random()
+
+                enemy1.x = enemy1Positions[0].toFloat()
+                enemy1.y = enemy1Positions[1].toFloat()
+
+                // Same for enemy2
+                enemy2Positions = listOf(
+                    (100..resources.displayMetrics.widthPixels - enemy2.width - 100).random(),
+                    (600..resources.displayMetrics.heightPixels - enemy2.height - 200).random()
+                )
+
+                enemy2Direction = listOf(45, 135, 225, 315).random()
+
+                enemy2.x = enemy2Positions[0].toFloat()
+                enemy2.y = enemy2Positions[1].toFloat()
+
+                handler.postDelayed(runnable, 8)
+            }
+        })
+
+        // Initialize UI elements
+        scoreTextView = findViewById(R.id.scoreTextView)
+        timerTextView = findViewById(R.id.timerTextView)
+        welldoneTextView = findViewById(R.id.welldoneTextView)
+
+        startTimer()
+
+        scoreLayout = findViewById(R.id.scoreLayout)
+        scoreLayout.visibility = View.GONE
     }
 
     override fun onResume() {
@@ -79,6 +168,7 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent) {
+        if (gameEnded){return}
         val x = event.values[0] // inclinaison gauche/droite
         val y = event.values[1] // inclinaison avant/arrière
         var posX = 0f
@@ -86,7 +176,7 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
         // Position actuelle du joueur
         if(y>0) {
             posX = player.x - x * 5
-            posY = player.y + y * 1
+            posY = player.y + y * 10
         }else{
             posX = player.x - x * 5
             posY = player.y + y * 10
@@ -132,55 +222,111 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
         }
 
         if (isColliding(player, gift1)) {
-            score += 100
+            score += 333
             gift1.x = -1000f
             gift1.y = -1000f
         }
 
         if (isColliding(player, gift2)) {
-            score += 100
+            score += 333
             gift2.x = -1000f
             gift2.y = -1000f
         }
 
+        if (isColliding(player, gift3)) {
+            score += 333
+            gift3.x = -1000f
+            gift3.y = -1000f
+        }
+
         if (isColliding(player, door)) {
-            Toast.makeText(this, "Score final : $score", Toast.LENGTH_LONG).show()
-
-            val db = AppDatabase.getDatabase(applicationContext)
-            val dao = db.userDao()
-
-            lifecycleScope.launch(Dispatchers.IO) {
-                val existingGame = dao.loadAllByIds(intArrayOf(4)).firstOrNull()
-                val newScore = score.toInt()
-
-                if (existingGame?.highScore == null || newScore > existingGame.highScore!!) {
-                    dao.updateHighScore(4, newScore)
-                }
-            }
-
-            handler.postDelayed(endGame, 3000)
+            onGameOver(true)
         }
     }
-    private var enemy1Direction = 1
-    private var enemy2Direction = 1
 
     private fun moveEnemies() {
-        val speed = 5f // Vitesse de déplacement des ennemis
-        val screenWidth = resources.displayMetrics.widthPixels.toFloat()
+        val speed = 5f
 
-        // Déplacer enemy1
-        enemy1.x += enemy1Direction * speed
-        if (enemy1.x + enemy1.width > screenWidth || enemy1.x < 0) {
-            enemy1Direction *= -1 // Inverser la direction de enemy1
+        // Update positions
+        enemy1.x += (Math.cos(Math.toRadians(enemy1Direction.toDouble())) * speed).toFloat()
+        enemy1.y += (Math.sin(Math.toRadians(enemy1Direction.toDouble())) * speed).toFloat()
+
+        enemy2.x += (Math.cos(Math.toRadians(enemy2Direction.toDouble())) * speed).toFloat()
+        enemy2.y += (Math.sin(Math.toRadians(enemy2Direction.toDouble())) * speed).toFloat()
+
+        val screenWidth = resources.displayMetrics.widthPixels
+        val screenHeight = resources.displayMetrics.heightPixels
+
+        // Bounce logic for enemy1
+        if (enemy1.x < 0 || enemy1.x > screenWidth - enemy1.width) {
+            enemy1Direction = (180 - enemy1Direction) % 360
+        }
+        if (enemy1.y < 600 || enemy1.y > screenHeight - enemy1.height) {
+            enemy1Direction = (360 - enemy1Direction) % 360
         }
 
-        // Déplacer enemy2
-        enemy2.x += enemy2Direction * speed
-        if (enemy2.x + enemy2.width > screenWidth || enemy2.x < 0) {
-            enemy2Direction *= -1 // Inverser la direction de enemy2
+        // Bounce logic for enemy2
+        if (enemy2.x < 0 || enemy2.x > screenWidth - enemy2.width) {
+            enemy2Direction = (180 - enemy2Direction) % 360
+        }
+        if (enemy2.y < 600 || enemy2.y > screenHeight - enemy2.height) {
+            enemy2Direction = (360 - enemy2Direction) % 360
         }
 
-        // Appeler à nouveau cette fonction après un petit délai pour simuler une boucle de jeu
-        enemy1.postDelayed({ moveEnemies() }, 8) // ~60 fps
+        //Log.d("AHA", enemy1.x.toString())
+        //Log.d("AHA", enemy1.y.toString())
+    }
+
+    private fun startTimer(time: Long = totalTime) {
+        countDownTimer = object : CountDownTimer(time, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                timerTextView.text = "Time: ${millisUntilFinished / 1000}s"
+                multiplicateurScore =  millisUntilFinished.toDouble()/totalTime.toDouble()
+            }
+
+            @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+            override fun onFinish() {
+                timerTextView.text = "Time's up!"
+                scoreLayout.visibility = View.VISIBLE
+                onGameOver(false)
+            }
+        }.start()
+    }
+
+    fun onGameOver(win: Boolean){
+        gameEnded = true
+
+        countDownTimer?.cancel()
+
+        scoreLayout.visibility = View.VISIBLE
+
+        if (win){
+            //Log.d("DEBUG",multiplierScore.toString())
+            welldoneTextView.text = "Well done"
+            score = (score * multiplicateurScore).toLong()
+        } else {
+            welldoneTextView.text = "Another time ?"
+            score = 0
+        }
+        scoreTextView.text = "Score: "+score
+
+        val db = AppDatabase.getDatabase(applicationContext)
+        val dao = db.userDao()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val existingGame = dao.loadAllByIds(intArrayOf(4)).firstOrNull()
+            val newScore = score.toInt()
+
+            if (existingGame?.highScore == null || newScore > existingGame.highScore!!) {
+                dao.updateHighScore(4, newScore)
+            }
+        }
+        handler.removeCallbacks(runnable)
+        handler.postDelayed(endGame, 3000)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(runnable)
     }
 }
