@@ -20,7 +20,7 @@
         android:theme="@style/Theme.Projet_ProgM"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".ActivityHomePage"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Projet_ProgM">
@@ -40,6 +40,12 @@
             android:name=".QuestionnaireGameActivity"
             android:exported="true" />
         <activity
+            android:name=".ActivitySoloMode"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Projet_ProgM">
+        </activity>
+        <activity
             android:name=".ActivityTrainingMode"
             android:exported="true"
             android:label="@string/app_name"
@@ -57,9 +63,6 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.Projet_ProgM">
         </activity>
-        <activity
-            android:name=".QuestionnaireGameActivity"
-            android:exported="true" />
         <activity
             android:name=".EnigmeActivity"
             android:exported="true" />
