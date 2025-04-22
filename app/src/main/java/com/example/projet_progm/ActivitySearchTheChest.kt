@@ -170,7 +170,7 @@ class ActivitySearchTheChest : ComponentActivity() {
             }
         }
 
-        handler.postDelayed(endGame, 5000)
+        handler.postDelayed(endGame, 3000)
     }
 
     private fun startTimer() {
