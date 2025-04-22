@@ -17,6 +17,9 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.Math.toDegrees
 import java.lang.Thread.sleep
 import kotlin.math.abs
@@ -125,7 +128,6 @@ class ActivitySearchTheChest : ComponentActivity() {
             objectList.last().fade(parentLayout)
             objectList.removeLast()
             if (objectList.isEmpty()){
-                scoreLayout.visibility = View.VISIBLE
                 onGameOver(true)
             }
         }
@@ -144,6 +146,7 @@ class ActivitySearchTheChest : ComponentActivity() {
     fun onGameOver(win: Boolean) {
         loosed = true
         countDownTimer?.cancel()
+        scoreLayout.visibility = View.VISIBLE
         if (win){
             welldoneTextView.text = "Well done"
         } else {
@@ -155,7 +158,19 @@ class ActivitySearchTheChest : ComponentActivity() {
 
         Log.d("DEBUG", "The score is $score")
 
-        handler.postDelayed(endGame, 5000)
+        val db = AppDatabase.getDatabase(applicationContext)
+        val dao = db.userDao()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val existingGame = dao.loadAllByIds(intArrayOf(1)).firstOrNull()
+            val newScore = score.toInt()
+
+            if (existingGame?.highScore == null || newScore > existingGame.highScore!!) {
+                dao.updateHighScore(1, newScore)
+            }
+        }
+
+        handler.postDelayed(endGame, 3000)
     }
 
     private fun startTimer() {

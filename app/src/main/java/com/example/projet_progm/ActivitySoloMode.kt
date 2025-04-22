@@ -3,6 +3,8 @@ import AppDatabase
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.TextView
@@ -24,8 +26,20 @@ class ActivitySoloMode : ComponentActivity(){
     private val gameResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val score = result.data?.getLongExtra("score", 0L) ?: 0L
-            Log.d("DEBUG", "Result intent: ${result.data}")
-            Log.d("DEBUG", "Extras: ${result.data?.extras}")
+            scores.add(score)
+
+            // Update the appropriate score TextView here
+            val scoreTextViewId = when (currentGameIndex) {
+                0 -> R.id.Score1
+                1 -> R.id.Score2
+                2 -> R.id.Score3
+                else -> null
+            }
+            scoreTextViewId?.let {
+                findViewById<TextView>(it).text = "Score: $score"
+            }
+        } else {
+            val score = 0L
             scores.add(score)
 
             // Update the appropriate score TextView here
@@ -51,7 +65,10 @@ class ActivitySoloMode : ComponentActivity(){
         val activityMap = mapOf(
             "FindTheObject" to ActivityFindTheObject::class.java,
             "SearchTheChest" to ActivitySearchTheChest::class.java,
-            "EnigmeActivity" to ActivitySearchTheChest::class.java,
+            "EnigmeActivity" to EnigmeActivity::class.java,
+            "Player_VS_Enemy" to Player_VS_Enemy::class.java,
+            "QuestionnaireGameActivity" to QuestionnaireGameActivity::class.java,
+            "MementoActivity" to ActivityMemento::class.java
         )
 
         lifecycleScope.launch {
@@ -101,7 +118,9 @@ class ActivitySoloMode : ComponentActivity(){
     fun launchNextGameOrShowResult() {
             if (currentGameIndex < gameActToPlay.size) {
                 val intent = Intent(this@ActivitySoloMode, gameActToPlay[currentGameIndex])
-                gameResultLauncher.launch(intent)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    gameResultLauncher.launch(intent)
+                }, 2000) // Delay in milliseconds
             } else {
                 findViewById<TextView>(R.id.Score3).text = "Score: ${scores.getOrNull(2) ?: 0}"
                 findViewById<TextView>(R.id.FinalScore).text = "Final score: ${scores.sum()}"
