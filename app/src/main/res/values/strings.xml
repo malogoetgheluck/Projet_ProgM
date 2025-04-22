@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Projet_ProgM</string>
+    <string name="scan_bluetooth">Scan bluetooth</string>
+    <string name="not_supported">Not supported</string>
 </resources>

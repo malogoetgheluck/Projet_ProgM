@@ -41,7 +41,7 @@
         android:text="Solo mode"
         android:maxWidth="300dp"
         android:minWidth="200dp"
-        android:onClick="goToSoloGame"/>
+        android:onClick="goToGame"/>
 
     <Button
         android:id="@+id/button2"
