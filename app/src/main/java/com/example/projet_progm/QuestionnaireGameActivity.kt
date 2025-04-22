@@ -29,7 +29,7 @@ class QuestionnaireGameActivity : ComponentActivity() {
         Question("If I have a troll a gnome and a spider, how many legs do I have ?", listOf("8", "10", "12", "14"), 2),
         Question("A farmer has a rooster. Knowing that a hen can lay an egg every week, how many eggs will the farmer have at the end of a year ?", listOf("52", "55", "0", "1"), 2),
         Question("What does a pyrobarbarian see in a grove ?", listOf("A rabbit", "A peaceful land of joy", "A big bonefire !!!", "Himself"), 2),
-        Question("Quel pays a remporté la Coupe du Monde 2018?", listOf("Allemagne", "Brésil", "France", "Argentine"), 2),
+        Question("In Medieval Germany, a woman could divorce her husband through a Marital Duel. However, to make it fair, the man had a disadvantage. Which was it ?", listOf("The man needed to always hold a potato in his dominant hand", "The man needed to fight in a hole", "The woman fights the man on a horse", "The man had no weapon whereas the woman had an axe"), 1),
         Question("Combien de planètes dans le système solaire?", listOf("7", "8", "9", "10"), 1),
         Question("Quelle langue est parlée au Brésil?", listOf("Espagnol", "Portugais", "Français", "Italien"), 1)
     )
@@ -115,13 +115,13 @@ class QuestionnaireGameActivity : ComponentActivity() {
         if (selectedIndex == question.correctAnswer) {
             questionScore += 100
             toast?.cancel()
-            toast = Toast.makeText(this, "Bravo! Bonne réponse", Toast.LENGTH_SHORT)
+            toast = Toast.makeText(this, "Well-done ! Good answer", Toast.LENGTH_SHORT)
             toast?.show()
         } else {
             toast?.cancel()
             toast = Toast.makeText(
                 this,
-                "Presque! La réponse était: ${question.answers[question.correctAnswer]}",
+                "Almost ! The answer was : ${question.answers[question.correctAnswer]}",
                 Toast.LENGTH_SHORT
             )
             toast?.show()
