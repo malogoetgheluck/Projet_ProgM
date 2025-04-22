@@ -95,7 +95,7 @@ class ActivitySoloMode : ComponentActivity(){
                 }
             }
 
-            Log.d("DEBUG", "Fetched games: $gameNames")
+            //Log.d("DEBUG", "Fetched games: $gameNames")
 
             // -- The rest must be INSIDE the coroutine too:
             val gamesToPlay = mutableListOf<String>()

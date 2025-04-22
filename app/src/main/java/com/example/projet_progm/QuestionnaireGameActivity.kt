@@ -4,15 +4,20 @@ package com.example.projet_progm
 import android.app.Activity
 import android.content.Intent
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
@@ -20,17 +25,33 @@ import kotlinx.coroutines.launch
 
 class QuestionnaireGameActivity : ComponentActivity() {
 
-    private val questions = listOf(
-        Question("Quelle est la capitale de la France?", listOf("Paris", "Londres", "Berlin", "Madrid"), 0),
-        Question("Combien font 7 x 8?", listOf("42", "56", "64", "49"), 1),
-        Question("Quel est le plus grand océan?", listOf("Atlantique", "Indien", "Pacifique", "Arctique"), 2),
+    private var questions = listOf(
+        Question("If I have a troll a gnome and a spider, how many legs do I have ?", listOf("8", "10", "12", "14"), 2),
+        Question("A farmer has a rooster. Knowing that a hen can lay an egg every week, how many eggs will the farmer have at the end of a year ?", listOf("52", "55", "0", "1"), 2),
+        Question("What does a pyrobarbarian see in a grove ?", listOf("A rabbit", "A peaceful land of joy", "A big bonefire !!!", "Himself"), 2),
         Question("Quel pays a remporté la Coupe du Monde 2018?", listOf("Allemagne", "Brésil", "France", "Argentine"), 2),
         Question("Combien de planètes dans le système solaire?", listOf("7", "8", "9", "10"), 1),
         Question("Quelle langue est parlée au Brésil?", listOf("Espagnol", "Portugais", "Français", "Italien"), 1)
     )
 
+    private val shuffledQuestions = questions.shuffled()
+
     private var currentQuestionIndex = 0
+    private var questionScore = 0
+    private var multiplierScore: Double = 0.0
     private var score: Long = 0
+
+    private lateinit var scoreTextView: TextView
+    private lateinit var timerTextView: TextView
+    private lateinit var welldoneTextView: TextView
+    private var countDownTimer: CountDownTimer? = null
+    private val totalTime: Long = 30000 // 60 seconds
+
+    private lateinit var scoreLayout : FrameLayout
+
+    var toast: Toast? = null
+
+    private var numberOfQuestion = 3
 
     //To quit the game with a little delay
     private val handler = Handler(Looper.getMainLooper())
@@ -59,11 +80,21 @@ class QuestionnaireGameActivity : ComponentActivity() {
                 checkAnswer(index)
             }
         }
+
+        // Initialize UI elements
+        scoreTextView = findViewById(R.id.scoreTextView)
+        timerTextView = findViewById(R.id.timerTextView)
+        welldoneTextView = findViewById(R.id.welldoneTextView)
+
+        startTimer()
+
+        scoreLayout = findViewById(R.id.scoreLayout)
+        scoreLayout.visibility = View.GONE
     }
 
     private fun displayQuestion() {
-        if (currentQuestionIndex < questions.size) {
-            val question = questions[currentQuestionIndex]
+        if (currentQuestionIndex < numberOfQuestion) {
+            val question = shuffledQuestions[currentQuestionIndex]
             findViewById<TextView>(R.id.questionText).text = question.text
 
             listOf<Button>(
@@ -75,25 +106,48 @@ class QuestionnaireGameActivity : ComponentActivity() {
                 button.text = question.answers[index]
             }
         } else {
-            endGame()
+            endGame(true)
         }
     }
 
     private fun checkAnswer(selectedIndex: Int) {
-        val question = questions[currentQuestionIndex]
+        val question = shuffledQuestions[currentQuestionIndex]
         if (selectedIndex == question.correctAnswer) {
-            score += 100
+            questionScore += 100
+            toast?.cancel()
+            toast = Toast.makeText(this, "Bravo! Bonne réponse", Toast.LENGTH_SHORT)
+            toast?.show()
+        } else {
+            toast?.cancel()
+            toast = Toast.makeText(
+                this,
+                "Presque! La réponse était: ${question.answers[question.correctAnswer]}",
+                Toast.LENGTH_SHORT
+            )
+            toast?.show()
         }
         currentQuestionIndex++
         displayQuestion()
     }
 
-    private fun endGame() {
-        findViewById<TextView>(R.id.questionText).text = "Jeu terminé! Score: $score"
+    private fun endGame(win: Boolean) {
+        findViewById<TextView>(R.id.questionText).visibility = View.GONE
         findViewById<LinearLayout>(R.id.answersLayout).visibility = View.GONE
 
         val db = AppDatabase.getDatabase(applicationContext)
         val dao = db.userDao()
+
+        countDownTimer?.cancel()
+        scoreLayout.visibility = View.VISIBLE
+        if (win){
+            //Log.d("DEBUG",multiplierScore.toString())
+            welldoneTextView.text = "Well done"
+            score = (questionScore * multiplierScore).toLong()
+        } else {
+            welldoneTextView.text = "Another time ?"
+            score = 0
+        }
+        scoreTextView.text = "Score: "+score
 
         lifecycleScope.launch(Dispatchers.IO) {
             val existingGame = dao.loadAllByIds(intArrayOf(5)).firstOrNull()
@@ -105,6 +159,23 @@ class QuestionnaireGameActivity : ComponentActivity() {
         }
 
         handler.postDelayed(endGame, 3000)
+    }
+
+    private fun startTimer() {
+        countDownTimer = object : CountDownTimer(totalTime, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                timerTextView.text = "Time: ${millisUntilFinished / 1000}s"
+                multiplierScore = millisUntilFinished.toDouble()/totalTime.toDouble()
+                //Log.d("DEBUG",multiplierScore.toString())
+                //Log.d("DEBUG", (millisUntilFinished.toDouble()/totalTime.toDouble()).toString())
+            }
+
+            @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+            override fun onFinish() {
+                timerTextView.text = "Time's up!"
+                endGame(false)
+            }
+        }.start()
     }
 
     data class Question(
