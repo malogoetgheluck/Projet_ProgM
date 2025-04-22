@@ -42,8 +42,8 @@ class ActivityTrainingMode : ComponentActivity() {
                 // Set up the adapter and pass the data to RecyclerView
                 val adapter = MyAdapter(games) { game ->
                     val intent = when (game.uid) {
-                        1 -> Intent(this@ActivityTrainingMode, ActivityFindTheObject::class.java)
-                        2 -> Intent(this@ActivityTrainingMode, ActivitySearchTheChest::class.java)
+                        1 -> Intent(this@ActivityTrainingMode, ActivitySearchTheChest::class.java)
+                        2 -> Intent(this@ActivityTrainingMode, ActivityFindTheObject::class.java)
                         3 -> Intent(this@ActivityTrainingMode, EnigmeActivity::class.java)
                         4 -> Intent(this@ActivityTrainingMode, Player_VS_Enemy::class.java)
                         5 -> Intent(this@ActivityTrainingMode, QuestionnaireGameActivity::class.java)
