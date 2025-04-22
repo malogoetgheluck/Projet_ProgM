@@ -45,13 +45,13 @@ class QuestionnaireGameActivity : ComponentActivity() {
     private lateinit var timerTextView: TextView
     private lateinit var welldoneTextView: TextView
     private var countDownTimer: CountDownTimer? = null
-    private val totalTime: Long = 30000 // 60 seconds
+    private val totalTime: Long = 45000 // 60 seconds
 
     private lateinit var scoreLayout : FrameLayout
 
     var toast: Toast? = null
 
-    private var numberOfQuestion = 3
+    private var numberOfQuestion = 9
 
     //To quit the game with a little delay
     private val handler = Handler(Looper.getMainLooper())

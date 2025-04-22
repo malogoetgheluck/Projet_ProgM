@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -9,22 +9,85 @@
         android:id="@+id/riddleText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="450dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="24dp"
-        android:layout_marginTop="20dp"/>
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/answerInput"
+        android:height="50dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="640dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
         android:hint="Votre réponse..."
-        android:inputType="text"
-        android:layout_marginBottom="16dp"/>
+        android:inputType="text" />
 
     <Button
         android:id="@+id/validateButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Valider"/>
-</LinearLayout>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="690dp"
+        android:layout_marginEnd="96dp"
+        android:text="Valider" />
+
+    <TextView
+        android:id="@+id/timerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="50dp"
+        android:text="Time: 60s"
+        android:textColor="#FF0000"
+        android:textSize="24sp" />
+
+    <FrameLayout
+        android:id="@+id/scoreLayout"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="50dp"
+        android:background="#B0B0B0"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/welldoneTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center"
+            android:text="Well done"
+            android:textColor="#000000"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/scoreTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:text="Score: 0"
+            android:textColor="#000000"
+            android:textSize="24sp" />
+    </FrameLayout>
+</RelativeLayout>
