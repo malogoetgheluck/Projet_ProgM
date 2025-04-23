@@ -23,6 +23,10 @@ class ActivityTrainingMode : ComponentActivity() {
         musicPlayer = MusicPlayer(this)
         musicPlayer.playMusic(R.raw.menupage)
 
+        updateScore()
+    }
+
+    fun updateScore(){
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -70,6 +74,7 @@ class ActivityTrainingMode : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         musicPlayer.resumeMusic()
+        updateScore()
     }
 
     override fun onPause() {

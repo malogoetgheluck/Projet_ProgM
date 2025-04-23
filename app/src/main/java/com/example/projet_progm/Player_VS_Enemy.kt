@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
@@ -112,22 +111,22 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
                 gift1.x = (100..resources.displayMetrics.widthPixels - enemy1.width - 100).random()
                     .toFloat()
                 gift1.y =
-                    (800..resources.displayMetrics.heightPixels - enemy1.height - 100).random()
+                    (1000..resources.displayMetrics.heightPixels - enemy1.height - 100).random()
                         .toFloat()
                 gift2.x = (100..resources.displayMetrics.widthPixels - enemy1.width - 100).random()
                     .toFloat()
                 gift2.y =
-                    (800..resources.displayMetrics.heightPixels - enemy1.height - 100).random()
+                    (1000..resources.displayMetrics.heightPixels - enemy1.height - 100).random()
                         .toFloat()
                 gift3.x = (100..resources.displayMetrics.widthPixels - enemy1.width - 100).random()
                     .toFloat()
                 gift3.y =
-                    (800..resources.displayMetrics.heightPixels - enemy1.height - 100).random()
+                    (1000..resources.displayMetrics.heightPixels - enemy1.height - 100).random()
                         .toFloat()
 
                 enemy1Positions = listOf(
                     (100..resources.displayMetrics.widthPixels - enemy1.width - 100).random(),
-                    (600..resources.displayMetrics.heightPixels - enemy1.height - 200).random()
+                    (1000..resources.displayMetrics.heightPixels - enemy1.height - 200).random()
                 )
 
                 enemy1Direction = listOf(45, 135, 225, 315).random()
@@ -138,7 +137,7 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
                 // Same for enemy2
                 enemy2Positions = listOf(
                     (100..resources.displayMetrics.widthPixels - enemy2.width - 100).random(),
-                    (600..resources.displayMetrics.heightPixels - enemy2.height - 200).random()
+                    (1000..resources.displayMetrics.heightPixels - enemy2.height - 200).random()
                 )
 
                 enemy2Direction = listOf(45, 135, 225, 315).random()
@@ -191,9 +190,10 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
         // Empêcher de sortir de l'écran
         val maxX = (resources.displayMetrics.widthPixels - player.width).toFloat()
         val maxY = (resources.displayMetrics.heightPixels - player.height).toFloat()
+        val minY = 1000.toFloat()
 
         posX = min(max(posX, 0f), maxX)
-        posY = min(max(posY, 0f), maxY)
+        posY = min(max(posY, minY), maxY)
 
         player.x = posX
         player.y = posY
@@ -267,7 +267,7 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
         if (enemy1.x < 0 || enemy1.x > screenWidth - enemy1.width) {
             enemy1Direction = (180 - enemy1Direction) % 360
         }
-        if (enemy1.y < 600 || enemy1.y > screenHeight - enemy1.height) {
+        if (enemy1.y < 1000 || enemy1.y > screenHeight - enemy1.height) {
             enemy1Direction = (360 - enemy1Direction) % 360
         }
 
@@ -275,7 +275,7 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
         if (enemy2.x < 0 || enemy2.x > screenWidth - enemy2.width) {
             enemy2Direction = (180 - enemy2Direction) % 360
         }
-        if (enemy2.y < 600 || enemy2.y > screenHeight - enemy2.height) {
+        if (enemy2.y < 1000 || enemy2.y > screenHeight - enemy2.height) {
             enemy2Direction = (360 - enemy2Direction) % 360
         }
 
@@ -309,7 +309,7 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
         if (win){
             //Log.d("DEBUG",multiplierScore.toString())
             welldoneTextView.text = "Well done"
-            score = (score * multiplicateurScore).toLong()
+            score = max((score * multiplicateurScore).toLong(),0L)
 
             musicPlayer.playSound("success")
         } else {

@@ -15,6 +15,9 @@ interface UserDao {
     @Query("SELECT * FROM games WHERE uid IN (:userIds)")
     suspend fun loadAllByIds(userIds: IntArray): List<Games>
 
+    @Query("SELECT highScore FROM games WHERE uid = :userId")
+    suspend fun getHighScore(userId: Int): Int?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg users: Games)
 

@@ -4,18 +4,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/ruins"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="50dp"
+        android:text="Uh-oh ! The enemies have discovered you !\nRun for the gate, and make sure to grab the treasures !"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="#60D3D3D3"
+        android:radius="16dp"
+        android:padding="8dp"/>
+
     <FrameLayout
     android:id="@+id/gameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/background"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/background"
-            android:scaleType="centerCrop" />
-        <!-- Joueur -->
 
         <ImageView
             android:id="@+id/player"
@@ -33,7 +47,8 @@
             android:layout_marginLeft="1000px"
             android:layout_marginTop="2000px"
             android:layout_marginRight="50dp"
-            android:src="@drawable/ennemi" />
+            android:src="@drawable/ennemi"
+            android:elevation="10dp"/>
 
         <ImageView
             android:id="@+id/enemy2"
@@ -41,7 +56,8 @@
             android:layout_height="60dp"
             android:layout_marginLeft="00dp"
             android:layout_marginTop="300dp"
-            android:src="@drawable/ennemi" />
+            android:src="@drawable/ennemi"
+            android:elevation="10dp"/>
 
         <ImageView
             android:id="@+id/gift1"
@@ -49,7 +65,8 @@
             android:layout_height="60dp"
             android:layout_marginLeft="300dp"
             android:layout_marginTop="180dp"
-            android:src="@drawable/gift" />
+            android:src="@drawable/gift"
+            android:elevation="5dp"/>
 
         <ImageView
             android:id="@+id/gift2"
@@ -57,7 +74,8 @@
             android:layout_height="60dp"
             android:layout_marginLeft="00dp"
             android:layout_marginTop="380dp"
-            android:src="@drawable/gift" />
+            android:src="@drawable/gift"
+            android:elevation="5dp"/>
 
         <ImageView
             android:id="@+id/gift3"
@@ -65,7 +83,8 @@
             android:layout_height="60dp"
             android:layout_marginLeft="200dp"
             android:layout_marginTop="380dp"
-            android:src="@drawable/gift" />
+            android:src="@drawable/gift"
+            android:elevation="5dp"/>
 
         <ImageView
             android:id="@+id/door"
@@ -73,8 +92,9 @@
             android:layout_height="80dp"
             android:src="@drawable/door"
             android:layout_gravity="top|start"
-            android:layout_marginTop="300dp"
+            android:layout_marginTop="400dp"
             android:layout_marginStart="170dp"
+            android:elevation="0dp"
             />
     </FrameLayout>
 
@@ -107,9 +127,9 @@
             android:layout_marginStart="50dp"
             android:layout_marginTop="200dp"
             android:layout_marginEnd="50dp"
-            android:background="#B0B0B0"
+            android:background="@drawable/rectanglebox"
             android:gravity="center"
-            android:padding="16dp">
+            android:padding="35dp">
 
             <TextView
                 android:id="@+id/welldoneTextView"

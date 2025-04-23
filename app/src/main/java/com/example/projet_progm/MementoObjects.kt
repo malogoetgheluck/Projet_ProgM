@@ -49,8 +49,8 @@ class MementoObjects(private val context: Context, private val obj: Int) {
             layoutParams = RelativeLayout.LayoutParams(w, h).apply {
                 leftMargin = context.resources.displayMetrics.widthPixels / 2 + posX - w / 2
                 posx = context.resources.displayMetrics.widthPixels / 2 + posX
-                topMargin = context.resources.displayMetrics.heightPixels / 2 + posY - w / 2 + 200
-                posy = context.resources.displayMetrics.heightPixels / 2 + posY + 200
+                topMargin = context.resources.displayMetrics.heightPixels / 2 + posY - w / 2 + 300
+                posy = context.resources.displayMetrics.heightPixels / 2 + posY + 300
             }
 
             setImageBitmap(recto)

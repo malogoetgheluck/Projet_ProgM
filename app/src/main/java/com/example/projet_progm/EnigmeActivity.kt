@@ -17,7 +17,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
-import com.example.projet_progm.QuestionnaireGameActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

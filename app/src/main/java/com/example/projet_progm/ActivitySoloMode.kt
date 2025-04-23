@@ -115,7 +115,10 @@ class ActivitySoloMode : ComponentActivity(){
             findViewById<TextView>(R.id.Game3).text = "Minigame n°3 : ${gamesToPlay[2]}"
 
             // Start the first game
-            launchNextGameOrShowResult()
+            Handler(Looper.getMainLooper()).postDelayed({
+                launchNextGameOrShowResult()
+            }, 5000)
+
         }
     }
 

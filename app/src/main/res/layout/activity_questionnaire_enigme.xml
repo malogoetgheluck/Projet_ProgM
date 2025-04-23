@@ -2,8 +2,29 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/stonestatue"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="50dp"
+        android:text="A movement stirs... The giant statue tilts toward you.\n Answer my riddles, and I will grant you passage."
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="#60D3D3D3"
+        android:radius="16dp"
+        android:padding="8dp"/>
 
     <TextView
         android:id="@+id/riddleText"
@@ -17,13 +38,16 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="24dp"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:background="#70D3D3D3"
+        android:gravity="center"
+        android:padding="10dp"/>
 
     <EditText
         android:id="@+id/answerInput"
-        android:height="50dp"
+        android:height="60dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
@@ -31,20 +55,23 @@
         android:layout_marginTop="640dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="16dp"
-        android:hint="Votre réponse..."
-        android:inputType="text" />
+        android:hint="Your answer..."
+        android:inputType="text"
+        android:background="#70D3D3D3"
+        android:padding="10dp"/>
 
     <Button
         android:id="@+id/validateButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="96dp"
         android:layout_marginTop="690dp"
         android:layout_marginEnd="96dp"
-        android:text="Valider" />
+        android:background="@drawable/button"
+        android:text="Confirm" />
 
     <TextView
         android:id="@+id/timerTextView"
@@ -68,9 +95,9 @@
         android:layout_marginStart="50dp"
         android:layout_marginTop="200dp"
         android:layout_marginEnd="50dp"
-        android:background="#B0B0B0"
+        android:background="@drawable/rectanglebox"
         android:gravity="center"
-        android:padding="16dp">
+        android:padding="35dp">
 
         <TextView
             android:id="@+id/welldoneTextView"
