@@ -3,6 +3,8 @@ import AppDatabase
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.TextView
@@ -15,6 +17,7 @@ import java.lang.Thread.sleep
 
 
 class ActivitySoloMode : ComponentActivity(){
+    private lateinit var musicPlayer: MusicPlayer
 
     private val scores = mutableListOf<Long>()
     private var currentGameIndex = 0
@@ -24,8 +27,20 @@ class ActivitySoloMode : ComponentActivity(){
     private val gameResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val score = result.data?.getLongExtra("score", 0L) ?: 0L
-            Log.d("DEBUG", "Result intent: ${result.data}")
-            Log.d("DEBUG", "Extras: ${result.data?.extras}")
+            scores.add(score)
+
+            // Update the appropriate score TextView here
+            val scoreTextViewId = when (currentGameIndex) {
+                0 -> R.id.Score1
+                1 -> R.id.Score2
+                2 -> R.id.Score3
+                else -> null
+            }
+            scoreTextViewId?.let {
+                findViewById<TextView>(it).text = "Score: $score"
+            }
+        } else {
+            val score = 0L
             scores.add(score)
 
             // Update the appropriate score TextView here
@@ -48,10 +63,16 @@ class ActivitySoloMode : ComponentActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.solomodelayout)
 
+        musicPlayer = MusicPlayer(this)
+        musicPlayer.playMusic(R.raw.menupage)
+
         val activityMap = mapOf(
             "FindTheObject" to ActivityFindTheObject::class.java,
             "SearchTheChest" to ActivitySearchTheChest::class.java,
-            "EnigmeActivity" to ActivitySearchTheChest::class.java,
+            "EnigmeActivity" to EnigmeActivity::class.java,
+            "Player_VS_Enemy" to Player_VS_Enemy::class.java,
+            "QuestionnaireGameActivity" to QuestionnaireGameActivity::class.java,
+            "MementoActivity" to ActivityMemento::class.java
         )
 
         lifecycleScope.launch {
@@ -78,7 +99,7 @@ class ActivitySoloMode : ComponentActivity(){
                 }
             }
 
-            Log.d("DEBUG", "Fetched games: $gameNames")
+            //Log.d("DEBUG", "Fetched games: $gameNames")
 
             // -- The rest must be INSIDE the coroutine too:
             val gamesToPlay = mutableListOf<String>()
@@ -94,14 +115,19 @@ class ActivitySoloMode : ComponentActivity(){
             findViewById<TextView>(R.id.Game3).text = "Minigame n°3 : ${gamesToPlay[2]}"
 
             // Start the first game
-            launchNextGameOrShowResult()
+            Handler(Looper.getMainLooper()).postDelayed({
+                launchNextGameOrShowResult()
+            }, 5000)
+
         }
     }
 
     fun launchNextGameOrShowResult() {
             if (currentGameIndex < gameActToPlay.size) {
                 val intent = Intent(this@ActivitySoloMode, gameActToPlay[currentGameIndex])
-                gameResultLauncher.launch(intent)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    gameResultLauncher.launch(intent)
+                }, 2000) // Delay in milliseconds
             } else {
                 findViewById<TextView>(R.id.Score3).text = "Score: ${scores.getOrNull(2) ?: 0}"
                 findViewById<TextView>(R.id.FinalScore).text = "Final score: ${scores.sum()}"
@@ -111,5 +137,20 @@ class ActivitySoloMode : ComponentActivity(){
 
     fun goToMenu(view: View?) {
         finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        musicPlayer.release()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        musicPlayer.resumeMusic()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        musicPlayer.pauseMusic()
     }
 }

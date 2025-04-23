@@ -15,9 +15,12 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import java.lang.Thread.sleep
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ActivityFindTheObject : ComponentActivity() {
+    private lateinit var musicPlayer: MusicPlayer
 
     private var startX = 0f
     private var startY = 0f
@@ -70,7 +73,12 @@ class ActivityFindTheObject : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.searchthechestlayout)
+        setContentView(R.layout.findtheobjectlayout)
+
+        musicPlayer = MusicPlayer(this)
+        musicPlayer.playMusic(R.raw.minigame)
+        musicPlayer.loadSound("success", R.raw.success)
+        musicPlayer.loadSound("failure", R.raw.gameover)
 
         val parentLayout = findViewById<RelativeLayout>(R.id.parentLayout)
 
@@ -172,14 +180,30 @@ class ActivityFindTheObject : ComponentActivity() {
         if (win){
             welldoneTextView.text = "Well done"
             clearList()
+
+            musicPlayer.playSound("success")
         } else {
             welldoneTextView.text = "Another time ?"
             clearList()
             score = 0
+
+            musicPlayer.playSound("failure")
         }
         scoreTextView.text = "Score: "+score
 
-        handler.postDelayed(endGame, 5000)
+        val db = AppDatabase.getDatabase(applicationContext)
+        val dao = db.userDao()
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            val existingGame = dao.loadAllByIds(intArrayOf(2)).firstOrNull()
+            val newScore = score.toInt()
+
+            if (existingGame?.highScore == null || newScore > existingGame.highScore!!) {
+                dao.updateHighScore(2, newScore)
+            }
+        }
+
+        handler.postDelayed(endGame, 3000)
     }
 
     private fun startTimer(time: Long = totalTime) {
@@ -201,5 +225,6 @@ class ActivityFindTheObject : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         countDownTimer?.cancel()
+        musicPlayer.release()
     }
 }

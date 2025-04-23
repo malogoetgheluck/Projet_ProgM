@@ -2,14 +2,27 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent">
 
-    <!-- Background ImageView -->
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:contentDescription="chestbackground"
-        android:src="@drawable/chestbackground"
+        android:layout_height="match_parent"
+        android:src="@drawable/chimney"
         android:scaleType="centerCrop"/>
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="50dp"
+        android:text="Why are there so many weapons scattered about ?\nA quick tidy-up before you rest would be good."
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="#60D3D3D3"
+        android:radius="16dp"
+        android:padding="8dp"/>
 
     <TextView
         android:id="@+id/timerTextView"
@@ -26,43 +39,42 @@
         android:textColor="#FF0000"
         android:textSize="24sp" />
 
-    <FrameLayout
-        android:id="@+id/scoreLayout"
-        android:layout_width="300dp"
-        android:layout_height="150dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="400dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="400dp"
-        android:background="#B0B0B0"
-        android:gravity="center"
-        android:padding="16dp">
 
-        <TextView
-            android:id="@+id/welldoneTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Well done"
-            android:textColor="#000000"
-            android:textSize="24sp"
-            android:layout_gravity="top|center"/>
-
-        <TextView
-            android:id="@+id/scoreTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Score: 0"
-            android:textColor="#000000"
-            android:textSize="24sp"
-            android:layout_gravity="bottom|center"/>
-    </FrameLayout>
-
-
-    <!-- This LinearLayout is where objects will be added dynamically -->
     <RelativeLayout
         android:id="@+id/parentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"/>
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/scoreLayout"
+            android:layout_width="300dp"
+            android:layout_height="150dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="200dp"
+            android:layout_marginEnd="50dp"
+            android:background="@drawable/rectanglebox"
+            android:gravity="center"
+            android:padding="35dp">
+
+            <TextView
+                android:id="@+id/welldoneTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center"
+                android:text="Well done"
+                android:textColor="#000000"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/scoreTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:text="Score: 0"
+                android:textColor="#000000"
+                android:textSize="24sp" />
+        </FrameLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

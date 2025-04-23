@@ -6,5 +6,6 @@ import androidx.room.PrimaryKey
 data class Games(
     @PrimaryKey val uid: Int,
     @ColumnInfo(name = "game_name") val gameName: String?,
-    @ColumnInfo(name = "game_activity") val gameActivity: String?
+    @ColumnInfo(name = "game_activity") val gameActivity: String?,
+    @ColumnInfo(name = "highscore") val highScore: Int?
 )
