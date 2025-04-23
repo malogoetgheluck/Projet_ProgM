@@ -34,10 +34,10 @@ class ActivityHomePage : ComponentActivity() {
             newGame = Games(uid = 2, gameName = "Find the object", gameActivity = "FindTheObject", highScore = null)
             userDao.insertAll(newGame)
 
-            newGame = Games(uid = 3, gameName = "Riddles", gameActivity = "EnigmeActivity", highScore = 0)
+            newGame = Games(uid = 3, gameName = "Riddles", gameActivity = "EnigmeActivity", highScore = null)
             userDao.insertAll(newGame)
 
-            newGame = Games(uid = 4, gameName = "Dodge the enemies", gameActivity = "Player_VS_Enemy", highScore = null)
+            newGame = Games(uid = 4, gameName = "Dodge the enemies", gameActivity = "Player_VS_Enemy", highScore = 0)
             userDao.insertAll(newGame)
 
             newGame = Games(uid = 5, gameName = "Questions", gameActivity = "QuestionnaireGameActivity", highScore = null)
