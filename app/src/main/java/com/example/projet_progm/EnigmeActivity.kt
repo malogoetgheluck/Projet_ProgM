@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class EnigmeActivity : ComponentActivity() {
+    private lateinit var musicPlayer: MusicPlayer
 
     private lateinit var scoreTextView: TextView
     private lateinit var timerTextView: TextView
@@ -80,6 +81,12 @@ class EnigmeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_questionnaire_enigme)
+
+        musicPlayer = MusicPlayer(this)
+        musicPlayer.playMusic(R.raw.minigame)
+        musicPlayer.loadSound("success", R.raw.success)
+        musicPlayer.loadSound("failure", R.raw.gameover)
+
         displayCharade()
         val validateButton = findViewById<Button>(R.id.validateButton)
         validateButton.setOnClickListener {
@@ -140,9 +147,13 @@ class EnigmeActivity : ComponentActivity() {
             //Log.d("DEBUG",multiplierScore.toString())
             welldoneTextView.text = "Well done"
             score = (questionScore * multiplierScore).toLong()
+
+            musicPlayer.playSound("success")
         } else {
             welldoneTextView.text = "Another time ?"
             score = 0
+
+            musicPlayer.playSound("failure")
         }
         scoreTextView.text = "Score: "+score
 
@@ -182,4 +193,9 @@ class EnigmeActivity : ComponentActivity() {
         val text: String,
         val answer: String
     )
+
+    override fun onDestroy() {
+        super.onDestroy()
+        musicPlayer.release()
+    }
 }

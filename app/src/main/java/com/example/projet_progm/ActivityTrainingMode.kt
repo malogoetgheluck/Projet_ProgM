@@ -14,10 +14,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ActivityTrainingMode : ComponentActivity() {
+    private lateinit var musicPlayer: MusicPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.trainingmodelayout)
+
+        musicPlayer = MusicPlayer(this)
+        musicPlayer.playMusic(R.raw.menupage)
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -56,5 +60,20 @@ class ActivityTrainingMode : ComponentActivity() {
                 Log.e("ERROR", "Error fetching games: ${e.message}")
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        musicPlayer.release()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        musicPlayer.resumeMusic()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        musicPlayer.pauseMusic()
     }
 }

@@ -17,6 +17,7 @@ import java.lang.Thread.sleep
 
 
 class ActivitySoloMode : ComponentActivity(){
+    private lateinit var musicPlayer: MusicPlayer
 
     private val scores = mutableListOf<Long>()
     private var currentGameIndex = 0
@@ -61,6 +62,9 @@ class ActivitySoloMode : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.solomodelayout)
+
+        musicPlayer = MusicPlayer(this)
+        musicPlayer.playMusic(R.raw.menupage)
 
         val activityMap = mapOf(
             "FindTheObject" to ActivityFindTheObject::class.java,
@@ -130,5 +134,20 @@ class ActivitySoloMode : ComponentActivity(){
 
     fun goToMenu(view: View?) {
         finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        musicPlayer.release()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        musicPlayer.resumeMusic()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        musicPlayer.pauseMusic()
     }
 }

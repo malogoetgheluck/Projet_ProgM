@@ -24,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class QuestionnaireGameActivity : ComponentActivity() {
+    private lateinit var musicPlayer: MusicPlayer
 
     private var questions = listOf(
         Question("If I have a troll a gnome and a spider, how many legs do I have ?", listOf("8", "10", "12", "14"), 2),
@@ -67,6 +68,11 @@ class QuestionnaireGameActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_questionnaire_game)
+
+        musicPlayer = MusicPlayer(this)
+        musicPlayer.playMusic(R.raw.minigame)
+        musicPlayer.loadSound("success", R.raw.success)
+        musicPlayer.loadSound("failure", R.raw.gameover)
 
         displayQuestion()
 
@@ -143,9 +149,13 @@ class QuestionnaireGameActivity : ComponentActivity() {
             //Log.d("DEBUG",multiplierScore.toString())
             welldoneTextView.text = "Well done"
             score = (questionScore * multiplierScore).toLong()
+
+            musicPlayer.playSound("success")
         } else {
             welldoneTextView.text = "Another time ?"
             score = 0
+
+            musicPlayer.playSound("failure")
         }
         scoreTextView.text = "Score: "+score
 
@@ -183,4 +193,9 @@ class QuestionnaireGameActivity : ComponentActivity() {
         val answers: List<String>,
         val correctAnswer: Int
     )
+
+    override fun onDestroy() {
+        super.onDestroy()
+        musicPlayer.release()
+    }
 }

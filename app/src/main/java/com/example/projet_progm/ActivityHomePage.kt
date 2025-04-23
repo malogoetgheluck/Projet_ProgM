@@ -6,6 +6,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.Switch
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
@@ -14,10 +18,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ActivityHomePage : ComponentActivity() {
+    private lateinit var musicPlayer: MusicPlayer
+    private lateinit var parameterLayout: FrameLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.mainlayout)
+
+        parameterLayout = findViewById(R.id.parameterLayout)
+
+        musicPlayer = MusicPlayer(this)
+        musicPlayer.playMusic(R.raw.homepage)
 
         val db = Room.databaseBuilder(
                 applicationContext,
@@ -52,6 +64,24 @@ class ActivityHomePage : ComponentActivity() {
                 //Log.d("DEBUG", "Game: ${it.gameName} ${it.gameActivity}")
             }
         }
+
+        //Parameters
+        val musicSwitch = findViewById<Switch>(R.id.musicSwitch)
+        val soundSwitch = findViewById<Switch>(R.id.soundSwitch)
+        val sharedPref = getSharedPreferences("BTDPrefs", MODE_PRIVATE)
+
+        musicSwitch.isChecked = sharedPref.getBoolean("music_enabled", true)
+        soundSwitch.isChecked = sharedPref.getBoolean("sound_enabled", true)
+
+        musicSwitch.setOnCheckedChangeListener { _, isChecked ->
+            sharedPref.edit().putBoolean("music_enabled", isChecked).apply()
+            musicPlayer.pauseMusic()
+            musicPlayer.resumeMusic()
+        }
+
+        soundSwitch.setOnCheckedChangeListener { _, isChecked ->
+            sharedPref.edit().putBoolean("sound_enabled", isChecked).apply()
+        }
     }
 
     fun goToSoloGame(view: View?) {
@@ -64,8 +94,34 @@ class ActivityHomePage : ComponentActivity() {
         startActivity(intent)
     }
 
-    fun goToMemento(view: View){
-        val intent = Intent(this, ActivityMemento::class.java)
-        startActivity(intent)
+    fun openParameters(view: View){
+        if (parameterLayout.visibility == View.VISIBLE){
+            parameterLayout.visibility = View.GONE
+        } else {
+            parameterLayout.visibility = View.VISIBLE
+        }
+    }
+
+    fun closeParameters(view: View){
+        parameterLayout.visibility = View.GONE
+    }
+
+    fun leaveGame(view: View){
+        finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        musicPlayer.release()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        musicPlayer.resumeMusic()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        musicPlayer.pauseMusic()
     }
 }

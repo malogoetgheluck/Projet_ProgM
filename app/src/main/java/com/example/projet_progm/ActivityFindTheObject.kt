@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import java.lang.Thread.sleep
 
 class ActivityFindTheObject : ComponentActivity() {
+    private lateinit var musicPlayer: MusicPlayer
 
     private var startX = 0f
     private var startY = 0f
@@ -74,6 +75,11 @@ class ActivityFindTheObject : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.searchthechestlayout)
+
+        musicPlayer = MusicPlayer(this)
+        musicPlayer.playMusic(R.raw.minigame)
+        musicPlayer.loadSound("success", R.raw.success)
+        musicPlayer.loadSound("failure", R.raw.gameover)
 
         val parentLayout = findViewById<RelativeLayout>(R.id.parentLayout)
 
@@ -175,10 +181,14 @@ class ActivityFindTheObject : ComponentActivity() {
         if (win){
             welldoneTextView.text = "Well done"
             clearList()
+
+            musicPlayer.playSound("success")
         } else {
             welldoneTextView.text = "Another time ?"
             clearList()
             score = 0
+
+            musicPlayer.playSound("failure")
         }
         scoreTextView.text = "Score: "+score
 
@@ -216,5 +226,6 @@ class ActivityFindTheObject : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         countDownTimer?.cancel()
+        musicPlayer.release()
     }
 }

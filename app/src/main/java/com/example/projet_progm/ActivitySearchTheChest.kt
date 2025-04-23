@@ -26,6 +26,7 @@ import kotlin.math.abs
 import kotlin.math.atan2
 
 class ActivitySearchTheChest : ComponentActivity() {
+    private lateinit var musicPlayer: MusicPlayer
 
     private var startX = 0f
     private var startY = 0f
@@ -58,6 +59,11 @@ class ActivitySearchTheChest : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.searchthechestlayout)
+
+        musicPlayer = MusicPlayer(this)
+        musicPlayer.playMusic(R.raw.minigame)
+        musicPlayer.loadSound("success", R.raw.success)
+        musicPlayer.loadSound("failure", R.raw.gameover)
 
         val parentLayout = findViewById<RelativeLayout>(R.id.parentLayout)
 
@@ -149,10 +155,14 @@ class ActivitySearchTheChest : ComponentActivity() {
         scoreLayout.visibility = View.VISIBLE
         if (win){
             welldoneTextView.text = "Well done"
+
+            musicPlayer.playSound("success")
         } else {
             welldoneTextView.text = "Another time ?"
             clearList()
             score = 0
+
+            musicPlayer.playSound("failure")
         }
         scoreTextView.text = "Score: "+score
 
@@ -193,5 +203,6 @@ class ActivitySearchTheChest : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         countDownTimer?.cancel()
+        musicPlayer.release()
     }
 }

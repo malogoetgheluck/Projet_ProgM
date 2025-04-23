@@ -28,6 +28,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
+    private lateinit var musicPlayer: MusicPlayer
 
     private lateinit var scoreTextView: TextView
     private lateinit var timerTextView: TextView
@@ -85,6 +86,11 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player_vs_enemy)
+
+        musicPlayer = MusicPlayer(this)
+        musicPlayer.playMusic(R.raw.minigame)
+        musicPlayer.loadSound("success", R.raw.success)
+        musicPlayer.loadSound("failure", R.raw.gameover)
 
         // Initialiser capteurs
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
@@ -304,9 +310,13 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
             //Log.d("DEBUG",multiplierScore.toString())
             welldoneTextView.text = "Well done"
             score = (score * multiplicateurScore).toLong()
+
+            musicPlayer.playSound("success")
         } else {
             welldoneTextView.text = "Another time ?"
             score = 0
+
+            musicPlayer.playSound("failure")
         }
         scoreTextView.text = "Score: "+score
 
@@ -328,5 +338,6 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(runnable)
+        musicPlayer.release()
     }
 }
