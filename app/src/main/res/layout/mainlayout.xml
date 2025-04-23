@@ -5,18 +5,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/blueportal"
+        android:scaleType="centerCrop"/>
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="75dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="100dp"
-        android:layout_marginEnd="75dp"
+        android:layout_marginEnd="50dp"
         android:text="Beat the dungeon"
+        android:gravity="center"
         android:textAlignment="center"
+        android:background="@drawable/titlebox"
         android:textSize="30sp" />
 
     <ImageView
@@ -27,7 +36,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="100dp"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="170dp"
         android:layout_marginEnd="100dp"
         android:contentDescription="Character"
         android:src="@drawable/character" />
@@ -38,10 +47,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="50dp"
         android:text="Solo mode"
         android:maxWidth="300dp"
         android:minWidth="200dp"
+        android:background="@drawable/button"
         android:onClick="goToSoloGame"/>
 
     <Button
@@ -50,10 +60,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/button"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="20dp"
         android:text="Training mode"
         android:maxWidth="300dp"
         android:minWidth="200dp"
+        android:background="@drawable/button"
         android:onClick="goToTrainingGame"/>
 
     <Button
@@ -62,10 +73,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/button2"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="20dp"
         android:text="Multiplayer mode"
         android:maxWidth="300dp"
-        android:minWidth="200dp"/>
+        android:minWidth="200dp"
+        android:background="@drawable/button"/>
 
     <Button
         android:id="@+id/quitButton"
@@ -73,10 +85,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/button3"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="20dp"
         android:text="Quit game"
         android:maxWidth="300dp"
         android:minWidth="200dp"
+        android:background="@drawable/button"
         android:onClick="leaveGame"/>
 
     <FrameLayout
@@ -87,7 +100,7 @@
         android:layout_marginTop="300dp"
         android:layout_marginBottom="200dp"
         android:layout_marginEnd="50dp"
-        android:background="#B0B0B0"
+        android:background="@drawable/rectangleboxvert"
         android:gravity="center"
         android:clickable="true"
         android:padding="16dp"
@@ -100,7 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top|center"
             android:layout_marginTop="50dp"
-            android:text="Parameters"
+            android:text="Settings"
             android:textColor="#000000"
             android:textSize="24sp" />
 
@@ -110,14 +123,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
             android:text="Close"
-            android:onClick="closeParameters"/>
+            android:background="@drawable/button"
+            android:onClick="closeParameters"
+            android:layout_marginBottom="30dp"/>
 
         <Switch
             android:id="@+id/musicSwitch"
             android:layout_width="200dp"
             android:layout_height="50dp"
             android:layout_gravity="center|top"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="100dp"
             android:layout_weight="1"
             android:gravity="center"
             android:text="Music"
@@ -128,24 +143,33 @@
             android:layout_width="200dp"
             android:layout_height="50dp"
             android:layout_gravity="center|top"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="150dp"
             android:layout_weight="1"
             android:gravity="center"
             android:text="Sound Effects"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
 
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="200dp"
+            android:text="Reset highscores"
+            android:onClick="resetHighscores"
+            android:background="@drawable/button"/>
+
     </FrameLayout>
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp"
         android:onClick="openParameters"
-        android:src="@drawable/leaf"
+        android:src="@drawable/parameterbutton"
         android:elevation="5dp"
         android:contentDescription="parameters"/>
 

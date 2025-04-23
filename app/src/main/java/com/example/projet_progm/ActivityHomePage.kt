@@ -4,12 +4,9 @@ import AppDatabase
 import Games
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.Switch
-import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
@@ -49,7 +46,7 @@ class ActivityHomePage : ComponentActivity() {
             newGame = Games(uid = 3, gameName = "Riddles", gameActivity = "EnigmeActivity", highScore = null)
             userDao.insertAll(newGame)
 
-            newGame = Games(uid = 4, gameName = "Dodge the enemies", gameActivity = "Player_VS_Enemy", highScore = 0)
+            newGame = Games(uid = 4, gameName = "Dodge the enemies", gameActivity = "Player_VS_Enemy", highScore = null)
             userDao.insertAll(newGame)
 
             newGame = Games(uid = 5, gameName = "Questions", gameActivity = "QuestionnaireGameActivity", highScore = null)
@@ -123,5 +120,19 @@ class ActivityHomePage : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         musicPlayer.pauseMusic()
+    }
+
+    fun resetHighscores(view: View) {
+        lifecycleScope.launch {
+            val db = AppDatabase.getDatabase(applicationContext)
+            val dao = db.userDao()
+
+            for (i in 1..6) {
+                val currentScore = dao.getHighScore(i)
+                if (currentScore != null) {
+                    dao.updateHighScore(i, 0)
+                }
+            }
+        }
     }
 }

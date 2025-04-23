@@ -20,10 +20,6 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.Math.toDegrees
-import java.lang.Thread.sleep
-import kotlin.math.abs
-import kotlin.math.atan2
 
 class ActivityMemento : ComponentActivity() {
     private lateinit var musicPlayer: MusicPlayer
@@ -59,7 +55,7 @@ class ActivityMemento : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.searchthechestlayout)
+        setContentView(R.layout.mementolayout)
 
         musicPlayer = MusicPlayer(this)
         musicPlayer.playMusic(R.raw.minigame)

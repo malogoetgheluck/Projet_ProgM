@@ -21,7 +21,6 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Math.toDegrees
-import java.lang.Thread.sleep
 import kotlin.math.abs
 import kotlin.math.atan2
 
@@ -122,7 +121,7 @@ class ActivitySearchTheChest : ComponentActivity() {
         val angle = toDegrees(atan2(-deltaY, deltaX).toDouble()).toFloat()
 
         val normalizedAngle = if (angle < 0) angle + 360 else angle
-        val tolerance = 15f // Allow slight variation
+        val tolerance = 20f // Allow slight variation
 
         //Log.d("DEBUG", "Swipe at ${normalizedAngle.toInt()}° detected!")
         //Log.d("DEBUG",objectList.last().angle.toString())
@@ -166,7 +165,7 @@ class ActivitySearchTheChest : ComponentActivity() {
         }
         scoreTextView.text = "Score: "+score
 
-        Log.d("DEBUG", "The score is $score")
+        //Log.d("DEBUG", "The score is $score")
 
         val db = AppDatabase.getDatabase(applicationContext)
         val dao = db.userDao()

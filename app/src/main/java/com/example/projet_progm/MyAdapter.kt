@@ -26,7 +26,7 @@ class MyAdapter(
             holder.playButton.visibility = View.GONE
         } else {
             holder.nameTextView.text = game.gameName ?: "No name"
-            holder.scoreTextView.text = game.highScore.toString()
+            holder.scoreTextView.text = "H.S : "+game.highScore.toString()
             holder.playButton.visibility = View.VISIBLE
         }
 

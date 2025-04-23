@@ -18,7 +18,6 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.Thread.sleep
 
 class ActivityFindTheObject : ComponentActivity() {
     private lateinit var musicPlayer: MusicPlayer
@@ -74,7 +73,7 @@ class ActivityFindTheObject : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.searchthechestlayout)
+        setContentView(R.layout.findtheobjectlayout)
 
         musicPlayer = MusicPlayer(this)
         musicPlayer.playMusic(R.raw.minigame)

@@ -23,7 +23,7 @@ class STCObjects(private val context: Context) {
         imageView = ImageView(context).apply {
             layoutParams = RelativeLayout.LayoutParams(w, h).apply {
                 leftMargin = context.resources.displayMetrics.widthPixels / 2 - w / 2
-                topMargin = context.resources.displayMetrics.heightPixels / 2 - w / 2 + 100
+                topMargin = context.resources.displayMetrics.heightPixels / 2 - w / 2 + 300
             }
 
             val options = BitmapFactory.Options().apply {
@@ -50,17 +50,17 @@ class STCObjects(private val context: Context) {
 
             pivotX = w / 2f
             pivotY = h / 2f
-            rotation = angle + (-10..10).random()
+            rotation = angle + (-10..10).random()-135
 
-            if (angle == 135f || angle == 315f) {
-                scaleY = -1f
+            if (angle == 45f || angle == 225f) {
+                rotation = angle + (-10..10).random()+45
             }
         }
         return imageView!!
     }
 
     fun fade(parentLayout: ViewGroup) {
-        //Log.d("DEBUG", "I'M FLYING AWAY !!!")
+        //Log.d("DEBUG", angle.toString())
 
         imageView?.let { leafView ->
             val distance = 300f // Adjust this for how far it should move
