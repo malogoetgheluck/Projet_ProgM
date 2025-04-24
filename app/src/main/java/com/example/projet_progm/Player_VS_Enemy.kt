@@ -67,7 +67,7 @@ class Player_VS_Enemy : AppCompatActivity(), SensorEventListener {
     private val endGame = object : Runnable {
         override fun run() {
             val resultIntent = Intent()
-            resultIntent.putExtra("score", score)
+            resultIntent.putExtra("score", score.toInt())
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }

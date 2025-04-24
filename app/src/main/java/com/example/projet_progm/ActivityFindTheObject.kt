@@ -63,7 +63,7 @@ class ActivityFindTheObject : ComponentActivity() {
     private val endGame = object : Runnable {
         override fun run() {
             val resultIntent = Intent().apply {
-                putExtra("score", score)
+                putExtra("score", score.toInt())
             }
             setResult(Activity.RESULT_OK, resultIntent)
             finish()

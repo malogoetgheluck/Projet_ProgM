@@ -29,30 +29,60 @@ class ActivityHomePage : ComponentActivity() {
         musicPlayer.playMusic(R.raw.homepage)
 
         val db = Room.databaseBuilder(
-                applicationContext,
-                AppDatabase::class.java, "myDatabase"
-            ).fallbackToDestructiveMigration(false).build()
+            applicationContext,
+            AppDatabase::class.java, "myDatabase"
+        ).fallbackToDestructiveMigration(false).build()
 
         val userDao = db.userDao()
 
         // Use a coroutine to insert the games
         lifecycleScope.launch(Dispatchers.IO) {
-            var newGame = Games(uid = 1, gameName = "Search the chest", gameActivity = "SearchTheChest", highScore = null)
+            var newGame = Games(
+                uid = 1,
+                gameName = "Remove the weapon",
+                gameActivity = "SearchTheChest",
+                highScore = null
+            )
             userDao.insertAll(newGame)
 
-            newGame = Games(uid = 2, gameName = "Find the object", gameActivity = "FindTheObject", highScore = null)
+            newGame = Games(
+                uid = 2,
+                gameName = "Find the object",
+                gameActivity = "FindTheObject",
+                highScore = null
+            )
             userDao.insertAll(newGame)
 
-            newGame = Games(uid = 3, gameName = "Riddles", gameActivity = "EnigmeActivity", highScore = null)
+            newGame = Games(
+                uid = 3,
+                gameName = "Riddles",
+                gameActivity = "EnigmeActivity",
+                highScore = null
+            )
             userDao.insertAll(newGame)
 
-            newGame = Games(uid = 4, gameName = "Dodge the enemies", gameActivity = "Player_VS_Enemy", highScore = null)
+            newGame = Games(
+                uid = 4,
+                gameName = "Dodge the enemies",
+                gameActivity = "Player_VS_Enemy",
+                highScore = null
+            )
             userDao.insertAll(newGame)
 
-            newGame = Games(uid = 5, gameName = "Questions", gameActivity = "QuestionnaireGameActivity", highScore = null)
+            newGame = Games(
+                uid = 5,
+                gameName = "Questions",
+                gameActivity = "QuestionnaireGameActivity",
+                highScore = null
+            )
             userDao.insertAll(newGame)
 
-            newGame = Games(uid = 6, gameName = "Memento", gameActivity = "MementoActivity", highScore = null)
+            newGame = Games(
+                uid = 6,
+                gameName = "Memento",
+                gameActivity = "MementoActivity",
+                highScore = null
+            )
             userDao.insertAll(newGame)
 
             // Optional: read back users
@@ -91,19 +121,24 @@ class ActivityHomePage : ComponentActivity() {
         startActivity(intent)
     }
 
-    fun openParameters(view: View){
-        if (parameterLayout.visibility == View.VISIBLE){
+    fun goToMultiMode(view: View?) {
+        val intent = Intent(this, ActivityMultiMode::class.java)
+        startActivity(intent)
+    }
+
+    fun openParameters(view: View) {
+        if (parameterLayout.visibility == View.VISIBLE) {
             parameterLayout.visibility = View.GONE
         } else {
             parameterLayout.visibility = View.VISIBLE
         }
     }
 
-    fun closeParameters(view: View){
+    fun closeParameters(view: View) {
         parameterLayout.visibility = View.GONE
     }
 
-    fun leaveGame(view: View){
+    fun leaveGame(view: View) {
         finish()
     }
 
@@ -126,7 +161,6 @@ class ActivityHomePage : ComponentActivity() {
         lifecycleScope.launch {
             val db = AppDatabase.getDatabase(applicationContext)
             val dao = db.userDao()
-
             for (i in 1..6) {
                 val currentScore = dao.getHighScore(i)
                 if (currentScore != null) {

@@ -16,7 +16,7 @@
     <TextView
         android:id="@+id/Explications"
         android:layout_width="400dp"
-        android:layout_height="230dp"
+        android:layout_height="280dp"
         android:layout_marginTop="50dp"
         android:background="@drawable/rectanglebox"
         android:gravity="center"
@@ -31,7 +31,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="500dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="40dp"
         android:layout_marginRight="80dp"
         android:layout_marginLeft="80dp"
         app:layout_constraintEnd_toEndOf="parent"

@@ -77,7 +77,8 @@
         android:text="Multiplayer mode"
         android:maxWidth="300dp"
         android:minWidth="200dp"
-        android:background="@drawable/button"/>
+        android:background="@drawable/button"
+        android:onClick="goToMultiMode"/>
 
     <Button
         android:id="@+id/quitButton"
