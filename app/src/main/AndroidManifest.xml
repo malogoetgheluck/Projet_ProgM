@@ -67,6 +67,9 @@
             android:name=".EnigmeActivity"
             android:exported="true" />
         <activity
+            android:name=".ActivityMultiMode"
+            android:exported="true" />
+        <activity
             android:name=".Player_VS_Enemy"
             android:exported="true" />
         <activity

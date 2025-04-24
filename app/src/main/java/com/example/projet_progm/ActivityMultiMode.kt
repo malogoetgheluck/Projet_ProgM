@@ -2,6 +2,7 @@ package com.example.projet_progm
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
@@ -28,14 +29,15 @@ import java.util.UUID
 import android.os.Handler
 import android.os.Looper
 import android.bluetooth.BluetoothServerSocket
+import android.media.MediaPlayer
 
 class ActivityMultiMode : ComponentActivity() {
 
     companion object {
-        private const val MSG_START_GAME = "START_GAME:"
-        private const val MSG_GAME_END = "GAME_END"
-        private const val MSG_REQUEST_SYNC = "REQUEST_SYNC"
-        private const val MSG_SYNC_RESPONSE = "SYNC_RESPONSE:"
+        private const val MSG_SERVER_SEQUENCE = "SERVER_SEQUENCE:"
+        private const val MSG_SEQUENCE_COMPLETE = "SEQUENCE_COMPLETE"
+        private const val MSG_REQUEST_FINAL_SCORES = "REQUEST_FINAL_SCORES"
+        private const val MSG_FINAL_SCORES = "FINAL_SCORES:"
     }
 
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
@@ -47,48 +49,28 @@ class ActivityMultiMode : ComponentActivity() {
     private var isServer: Boolean = false
 
     private var isWaitingForConnection = false
-    private lateinit var serverSocket: BluetoothServerSocket
+    private  var serverSocket: BluetoothServerSocket? = null
 
     private lateinit var connectionRequestDialog: AlertDialog
-    private var pendingDevice: BluetoothDevice? = null
-    private val connectionRequestReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when(intent?.action) {
-                "ACCEPT_CONNECTION" -> acceptConnection()
-                "REJECT_CONNECTION" -> rejectConnection()
-            }
-        }
-    }
-    private val connectionResponseReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.getStringExtra("status")) {
-                "ACCEPTED" -> {
-                    Toast.makeText(this@ActivityMultiMode, "Connexion acceptée!", Toast.LENGTH_SHORT).show()
-                    startBluetoothMessageListener()
-                }
-                "REJECTED" -> {
-                    Toast.makeText(this@ActivityMultiMode, "Connexion refusée", Toast.LENGTH_SHORT).show()
-                    bluetoothSocket?.close()
-                }
-            }
-        }
-    }
-
     private val deviceList = mutableListOf<BluetoothDevice>()
     private lateinit var adapter: ArrayAdapter<String>
 
     private var isConnectionEstablished = false
-    private val connectionLock = Object()
 
     private val REQUEST_ENABLE_BT = 1
     private val APP_UUID: UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66")
-
-    private val handler = Handler(Looper.getMainLooper())
+    
     private val selectedGames = mutableListOf<Class<*>>()
     private var currentGameIndex = 0
     private var isGameSequenceRunning = false
     private val REQUEST_GAME_ACTIVITY = 1001
-    private var first_game=0
+  
+    private var serverScore = 0
+    private var clientScore = 0
+    private var opponentCompleted = false
+    private var myCompleted = false
+    private var mediaPlayer: MediaPlayer? = null
+    private val handler = Handler(Looper.getMainLooper())
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -116,18 +98,6 @@ class ActivityMultiMode : ComponentActivity() {
             val device = deviceList[position]
             connectToDevice(device)
         }
-
-        val playButton = findViewById<Button>(R.id.playButton)
-        playButton.setOnClickListener {
-            // Choisir un jeu aléatoirement
-            val randomGame = listOf(
-                QuestionnaireGameActivity::class.java,
-                EnigmeActivity::class.java,
-                SearchTheChest::class.java,
-                Player_VS_Enemy::class.java
-            ).random()
-            startActivity(Intent(this, randomGame))
-        }
         startServerButton.setOnClickListener {
             startBluetoothServer()
         }
@@ -141,16 +111,6 @@ class ActivityMultiMode : ComponentActivity() {
             scanButton.isEnabled = true
         }
         // Enregistrer le receiver pour les réponses de connexion
-        val filter1 = IntentFilter().apply {
-            addAction("ACCEPT_CONNECTION")
-            addAction("REJECT_CONNECTION")
-        }
-        registerReceiver(connectionRequestReceiver, filter1)
-
-        val filter2 = IntentFilter().apply {
-            addAction("CONNECTION_RESPONSE")
-        }
-        registerReceiver(connectionResponseReceiver, filter2)
 
         startBluetoothMessageListener()
     }
@@ -257,12 +217,12 @@ class ActivityMultiMode : ComponentActivity() {
                     Toast.makeText(this, "En attente de connexion...", Toast.LENGTH_SHORT).show()
                 }
 
-                bluetoothSocket = serverSocket.accept()
+                bluetoothSocket = serverSocket?.accept()
                 isServer = true
                 isConnectionEstablished = true
 
                 runOnUiThread {
-                    Toast.makeText(this, "Client connecté ", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Connecté ", Toast.LENGTH_SHORT).show()
                     startBluetoothMessageListener()
 
                     // Attendre le handshake client
@@ -281,85 +241,28 @@ class ActivityMultiMode : ComponentActivity() {
             }
         }.start()
     }
-    private fun acceptConnection() {
-        isServer = true
-        isConnectionEstablished = true
 
-        runOnUiThread {
-            Toast.makeText(this, "Connexion acceptée avec ${bluetoothSocket?.remoteDevice?.name}", Toast.LENGTH_SHORT).show()
-            connectionRequestDialog.dismiss()
 
-            // Démarrer l'écoute des messages IMMÉDIATEMENT
-            startBluetoothMessageListener()
-
-            // Envoyer confirmation en 2 étapes
-            sendMessage("CONNECTION_ACCEPTED:SERVER_READY")
-
-            // Attendre 2 secondes avant de démarrer
-            Handler(Looper.getMainLooper()).postDelayed({
-                if (isConnectionEstablished) {
-                    startGameSequence()
-                }
-            }, 2000)
-        }
-    }
-    private fun rejectConnection() {
-        try {
-            bluetoothSocket?.close()
-            runOnUiThread {
-                Toast.makeText(this, "Connexion refusée", Toast.LENGTH_SHORT).show()
-                if (::connectionRequestDialog.isInitialized && connectionRequestDialog.isShowing) {
-                    connectionRequestDialog.dismiss()
-                }
-            }
-        } catch (e: IOException) {
-            Log.e("Bluetooth", "Error closing socket", e)
-        }
-    }
-
-    /**
-     * Sélectionne 3 jeux aléatoires et démarre la séquence
-     */
     private fun startGameSequence() {
-        if (isGameSequenceRunning) return
-
-        // Si c'est le serveur, choisir les jeux et informer le client
         if (isServer) {
-            val allGames = listOf(
-                QuestionnaireGameActivity::class.java,
-                EnigmeActivity::class.java,
-                SearchTheChest::class.java,
-                Player_VS_Enemy::class.java
-            ).shuffled().take(3)
-
-            selectedGames.clear()
-            selectedGames.addAll(allGames)
-            currentGameIndex = 0
-            isGameSequenceRunning = true
-
-            // Envoyer la séquence au client
-            val gameSequence = selectedGames.joinToString(",") { it.simpleName }
-            sendMessage("$MSG_START_GAME$gameSequence")
-
-            startNextGame()
-        } else {
-            // Si c'est le client, demander la synchronisation
-            sendMessage(MSG_REQUEST_SYNC)
+            startServerSequence()
         }
     }
 
-    /**
-     * Lance le prochain jeu dans la séquence
-     */
     private fun startNextGame() {
         if (currentGameIndex < selectedGames.size) {
             val gameClass = selectedGames[currentGameIndex]
-
             runOnUiThread {
                 val intent = Intent(this, gameClass).apply {
                     putExtra("IS_SERVER", isServer)
+                    putExtra("GAME_INDEX", currentGameIndex)
                 }
                 startActivityForResult(intent, REQUEST_GAME_ACTIVITY)
+            }
+        } else {
+            isGameSequenceRunning = false
+            runOnUiThread {
+                Toast.makeText(this, "Séquence de jeux terminée!", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -367,13 +270,13 @@ class ActivityMultiMode : ComponentActivity() {
     private fun startBluetoothMessageListener() {
         Thread {
             try {
-                val inputStream = bluetoothSocket?.inputStream
-                val buffer = ByteArray(1024)
-                while (bluetoothSocket != null && bluetoothSocket!!.isConnected) {
-                    val bytes = inputStream?.read(buffer)
-                    val message = String(buffer, 0, bytes ?: 0)
-                    Log.d("Bluetooth", "Message reçu : $message")
-                    handleReceivedMessage(message)
+                val reader = bluetoothSocket?.inputStream?.bufferedReader()
+                while (bluetoothSocket?.isConnected == true) {
+                    val message = reader?.readLine() ?: break
+                    Log.d("Bluetooth", "Message reçu complet: $message")
+                    runOnUiThread {
+                        handleReceivedMessage(message)
+                    }
                 }
             } catch (e: IOException) {
                 Log.e("Bluetooth", "Erreur lecture message", e)
@@ -382,9 +285,14 @@ class ActivityMultiMode : ComponentActivity() {
     }
 
     private fun sendMessage(message: String) {
+        if (bluetoothSocket?.isConnected != true) return
+
         Thread {
             try {
-                bluetoothSocket?.outputStream?.write(message.toByteArray())
+                // Ajouter un caractère de fin de message
+                val messageToSend = "$message\n"  // \n comme séparateur
+                bluetoothSocket?.outputStream?.write(messageToSend.toByteArray())
+                Log.d("Bluetooth", "Message envoyé: ${message.trim()}")
             } catch (e: IOException) {
                 Log.e("Bluetooth", "Erreur d'envoi", e)
             }
@@ -394,104 +302,72 @@ class ActivityMultiMode : ComponentActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_GAME_ACTIVITY) {
-            // Envoyer le signal de fin de jeu
-            sendMessage(MSG_GAME_END)
-            BluetoothGameManager.sendGameEnd(bluetoothSocket)
-            Log.e("END_GAME", "FIN 11 ")
-            // Passer au jeu suivant si c'est le serveur
-                currentGameIndex++
-            var i = 0
-            if (currentGameIndex < selectedGames.size) {
-                i=i+1
+        if (requestCode == REQUEST_GAME_ACTIVITY && resultCode == Activity.RESULT_OK) {
+            val score = data?.getIntExtra("score", 0) ?: 0
 
-                startNextGame()
+            if (isServer) {
+                serverScore += score
             } else {
-                isGameSequenceRunning = false
-                Toast.makeText(this, "Séquence terminée!", Toast.LENGTH_SHORT).show()
-            }
+                clientScore += score }
+            sendMessage("SCORE_UPDATE:$score")
 
+            currentGameIndex++
+
+            if (currentGameIndex < selectedGames.size) {
+                if (isServer) startNextServerGame() else startNextClientGame()
+            } else {
+                endGameSequence()
+            }
         }
     }
 
     private fun handleReceivedMessage(message: String) {
         when {
-            message.startsWith(MSG_START_GAME) -> {
-                // Le serveur envoie la séquence de jeux
-                val gamesStr = message.removePrefix(MSG_START_GAME)
-                val gameNames = gamesStr.split(",")
-
-                selectedGames.clear()
-                gameNames.forEach { name ->
-                    when (name) {
-                        "QuestionnaireGameActivity" -> selectedGames.add(QuestionnaireGameActivity::class.java)
-                        "EnigmeActivity" -> selectedGames.add(EnigmeActivity::class.java)
-                        "SearchTheChest" -> selectedGames.add(SearchTheChest::class.java)
-                        "Player_VS_Enemy" -> selectedGames.add(Player_VS_Enemy::class.java)
-                    }
-                }
-
-                currentGameIndex = 0
-                isGameSequenceRunning = true
-
-                if (!isServer && first_game==0) {
-                    first_game++
-                    startNextGame()
-                }
+            message.startsWith(MSG_SERVER_SEQUENCE) -> {
+                val sequence = message.removePrefix(MSG_SERVER_SEQUENCE)
+                startClientSequence(sequence)
             }
-            message == "CONNECTION_ACCEPTED:SERVER_READY" -> {
-                runOnUiThread {
-                    isServer = false
-                    isConnectionEstablished = true
-                    Toast.makeText(this, "Synchronisé avec le serveur", Toast.LENGTH_SHORT).show()
-                    sendMessage("CLIENT_READY") // Nouveau message de confirmation
-                }
-            }
-            message == MSG_REQUEST_SYNC -> {
-                // Le client demande la synchronisation
-                if (isServer && isGameSequenceRunning) {
-                    val gameSequence = selectedGames.joinToString(",") { it.simpleName }
-                    sendMessage("$MSG_SYNC_RESPONSE$gameSequence:$currentGameIndex")
-                }
-            }
-            message.startsWith(MSG_SYNC_RESPONSE) -> {
-                // Réponse du serveur avec l'état actuel
-                val parts = message.removePrefix(MSG_SYNC_RESPONSE).split(":")
-                if (parts.size == 2) {
-                    val gameNames = parts[0].split(",")
-                    val serverIndex = parts[1].toInt()
-
-                    selectedGames.clear()
-                    gameNames.forEach { name ->
-                        when (name) {
-                            "QuestionnaireGameActivity" -> selectedGames.add(QuestionnaireGameActivity::class.java)
-                            "EnigmeActivity" -> selectedGames.add(EnigmeActivity::class.java)
-                            "SearchTheChest" -> selectedGames.add(SearchTheChest::class.java)
-                            "Player_VS_Enemy" -> selectedGames.add(Player_VS_Enemy::class.java)
-                        }
-                    }
-
-                    currentGameIndex = serverIndex
-                    isGameSequenceRunning = true
-
-                    if (currentGameIndex < selectedGames.size) {
-                        startNextGame()
-                    }
-                }
-            }
-            message == MSG_GAME_END -> {
-                // Passer au jeu suivant si c'est le serveur
-
-                    currentGameIndex++
-                    if (currentGameIndex < selectedGames.size) {
-                        startNextGame()
+            message.startsWith("SCORE_UPDATE:") -> {
+                val scoreStr = message.removePrefix("SCORE_UPDATE:")
+                try {
+                    val score = scoreStr.toInt()
+                    if (isServer) {
+                        clientScore += score
                     } else {
-                        isGameSequenceRunning = false
-                        runOnUiThread {
-                            Toast.makeText(this, "Tous les jeux sont terminés!", Toast.LENGTH_SHORT).show()
-                        }
+                        serverScore += score
+                    }
+                } catch (e: NumberFormatException) {
+                    Log.e("Score", "Format de score invalide: $scoreStr")
+                }
+            }
+            message == MSG_SEQUENCE_COMPLETE -> {
+                opponentCompleted = true
+                runOnUiThread {
+                    Toast.makeText(this, "L'autre joueur a terminé", Toast.LENGTH_SHORT).show()
+                }
+                if (!isServer) {
+                    checkBothCompleted()
+                }
+            }
+            message == MSG_REQUEST_FINAL_SCORES -> {
+                val myFinalScore = if (isServer) serverScore else clientScore
+                sendMessage("$MSG_FINAL_SCORES$myFinalScore")
+            }
+
+            message.startsWith(MSG_FINAL_SCORES) -> {
+                try {
+                    val opponentFinalScore = message.removePrefix(MSG_FINAL_SCORES).toInt()
+                    if (isServer) {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            sendMessage("$MSG_FINAL_SCORES$serverScore")
+                        }, 300)
                     }
 
+                    showFinalScores(opponentFinalScore)
+
+                } catch (e: NumberFormatException) {
+                    Log.e("Scores", "Format de score invalide", e)
+                }
             }
             message == "CONNECTION_ACCEPTED" -> {
                 runOnUiThread {
@@ -503,9 +379,196 @@ class ActivityMultiMode : ComponentActivity() {
             }
         }
     }
+
+    private fun startServerSequence() {
+        myCompleted = false
+        opponentCompleted = false
+        if (isGameSequenceRunning) return
+
+        val allGames = listOf(
+            QuestionnaireGameActivity::class.java,
+            EnigmeActivity::class.java,
+            //ActivitySearchTheChest::class.java,
+            Player_VS_Enemy::class.java,
+            ActivityMemento::class.java,
+            //ActivityFindTheObject::class.java
+        ).shuffled().take(3)
+
+        selectedGames.clear()
+        selectedGames.addAll(allGames)
+        currentGameIndex = 0
+        isGameSequenceRunning = true
+
+        val gameSequence = selectedGames.joinToString(",") { it.simpleName }
+        sendMessage("$MSG_SERVER_SEQUENCE$gameSequence")
+
+        startNextServerGame()
+    }
+
+    private fun startClientSequence(receivedSequence: String) {
+        myCompleted = false
+        opponentCompleted = false
+        if (isGameSequenceRunning) return
+
+        val gameNames = receivedSequence.split(",")
+
+        selectedGames.clear()
+        gameNames.forEach { name ->
+            when (name) {
+                "QuestionnaireGameActivity" -> selectedGames.add(QuestionnaireGameActivity::class.java)
+                "EnigmeActivity" -> selectedGames.add(EnigmeActivity::class.java)
+                "ActivitySearchTheChest" -> selectedGames.add(ActivitySearchTheChest::class.java)
+                "Player_VS_Enemy" -> selectedGames.add(Player_VS_Enemy::class.java)
+                "ActivityFindTheObject" -> selectedGames.add(ActivityFindTheObject::class.java)
+                "ActivityMemento" -> selectedGames.add(ActivityMemento::class.java)
+            }
+        }
+
+        currentGameIndex = 0
+        isGameSequenceRunning = true
+
+        startNextClientGame()
+    }
+    private fun startNextServerGame() {
+        if (currentGameIndex < selectedGames.size) {
+            val gameClass = selectedGames[currentGameIndex]
+            runOnUiThread {
+                val intent = Intent(this, gameClass).apply {
+                    putExtra("IS_SERVER", true)
+                    putExtra("GAME_INDEX", currentGameIndex)
+                }
+                startActivityForResult(intent, REQUEST_GAME_ACTIVITY)
+            }
+        } else {
+            endGameSequence()
+        }
+    }
+
+    private fun startNextClientGame() {
+        if (currentGameIndex < selectedGames.size) {
+            val gameClass = selectedGames[currentGameIndex]
+            runOnUiThread {
+                val intent = Intent(this, gameClass).apply {
+                    putExtra("IS_SERVER", false)
+                    putExtra("GAME_INDEX", currentGameIndex)
+                }
+                startActivityForResult(intent, REQUEST_GAME_ACTIVITY)
+            }
+        } else {
+            endGameSequence()
+        }
+    }
+    private fun showFinalScores(opponentScore: Int) {
+        runOnUiThread {
+            val myScore = if (isServer) serverScore else clientScore
+            val myRole = "Vous"
+            val opponentRole = "l'autre joueur"
+            val gameResult = when {
+                myScore > opponentScore -> "win"
+                myScore < opponentScore -> "lose"
+                else -> "draw"
+            }
+
+            playResultMusic(gameResult)
+            val resultMessage = buildResultMessage(myScore, opponentScore, myRole, opponentRole)
+            AlertDialog.Builder(this)
+                .setTitle("Résultats finaux")
+                .setMessage(resultMessage)
+                .setPositiveButton("OK") { dialog, _ ->
+                    stopResultMusic()
+                    dialog.dismiss()
+                }
+                .setOnCancelListener {
+                    stopResultMusic()
+                }
+                .show()
+            handler.postDelayed({
+                stopResultMusic()
+                try {
+                    bluetoothSocket?.close()
+                    serverSocket?.close()
+                } catch (e: IOException) {
+                    Log.e("Bluetooth", "Error closing sockets", e)
+                }
+                redirectToHomePage()
+            }, 4000)
+        }
+    }
+
+    private fun redirectToHomePage() {
+        if (!isFinishing && !isDestroyed) {
+            val intent = Intent(this, ActivityHomePage::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            startActivity(intent)
+            finish()
+        }
+    }
+    private fun playResultMusic(result: String) {
+        stopResultMusic()
+
+        val musicResId = when(result) {
+            "win" -> R.raw.victory_music
+            "lose" -> R.raw.defeat_music
+            else -> null
+        }
+
+        musicResId?.let {
+            mediaPlayer = MediaPlayer.create(this, it).apply {
+                isLooping = false
+                start()
+            }
+        }
+    }
+
+    private fun stopResultMusic() {
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.stop()
+            }
+            it.release()
+            mediaPlayer = null
+        }
+    }
+
+    private fun buildResultMessage(myScore: Int, opponentScore: Int, myRole: String, opponentRole: String): String {
+        return """
+        Scores finaux:
+        
+        $myRole: $myScore
+        $opponentRole: $opponentScore
+        
+        ${determineWinner(myScore, opponentScore)}
+    """.trimIndent()
+    }
+
+    private fun determineWinner(myScore: Int, opponentScore: Int): String {
+        return when {
+            myScore > opponentScore -> "Vous avez gagné !"
+            myScore < opponentScore -> "Vous avez perdu."
+            else -> "Égalité !"
+        }
+    }
+    private fun endGameSequence() {
+        isGameSequenceRunning = false
+        myCompleted = true
+        sendMessage(MSG_SEQUENCE_COMPLETE)
+        if (isServer) {
+            checkBothCompleted()
+        }
+    }
+    private fun checkBothCompleted() {
+        if (myCompleted && opponentCompleted) {
+            if (isServer) {
+                sendMessage(MSG_REQUEST_FINAL_SCORES)
+            }
+            myCompleted = false
+            opponentCompleted = false
+        }
+    }
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(connectionResponseReceiver)
+        stopResultMusic()
         try {
             bluetoothSocket?.close()
             serverSocket?.close()
