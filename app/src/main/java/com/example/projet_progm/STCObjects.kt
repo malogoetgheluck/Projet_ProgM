@@ -12,8 +12,8 @@ import android.widget.RelativeLayout
 
 class STCObjects(private val context: Context) {
 
-    var w = 1000;
-    var h = 1000;
+    var w = 700;
+    var h = 700;
 
     var angle = (1..4).random().toFloat()*90-45
 

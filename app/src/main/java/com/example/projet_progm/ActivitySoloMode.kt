@@ -19,14 +19,14 @@ import java.lang.Thread.sleep
 class ActivitySoloMode : ComponentActivity(){
     private lateinit var musicPlayer: MusicPlayer
 
-    private val scores = mutableListOf<Long>()
+    private val scores = mutableListOf<Int>()
     private var currentGameIndex = 0
 
     val gameActToPlay = mutableListOf<Class<out Activity>>()
 
     private val gameResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
-            val score = result.data?.getLongExtra("score", 0L) ?: 0L
+            val score = result.data?.getIntExtra("score", 0) ?: 0
             scores.add(score)
 
             // Update the appropriate score TextView here
@@ -40,7 +40,7 @@ class ActivitySoloMode : ComponentActivity(){
                 findViewById<TextView>(it).text = "Score: $score"
             }
         } else {
-            val score = 0L
+            val score = 0
             scores.add(score)
 
             // Update the appropriate score TextView here
