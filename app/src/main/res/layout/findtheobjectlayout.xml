@@ -12,17 +12,19 @@
     <TextView
         android:layout_width="300dp"
         android:layout_height="150dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginStart="50dp"
         android:layout_marginTop="200dp"
         android:layout_marginEnd="50dp"
-        android:text="Dark magic from a strange book is stirring up trouble among these items...\nSearch swiftly for the object you need — it's displayed above."
+        android:background="#60D3D3D3"
         android:gravity="center"
+        android:padding="8dp"
+        android:radius="16dp"
+        android:text="Dark magic from a strange book is stirring up trouble among these items...\nSearch swiftly for the object you need — it's displayed above."
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:textStyle="bold"
-        android:background="#60D3D3D3"
-        android:radius="16dp"
-        android:padding="8dp"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/timerTextView"
@@ -50,6 +52,8 @@
             android:id="@+id/scoreLayout"
             android:layout_width="300dp"
             android:layout_height="150dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
             android:layout_marginStart="50dp"
             android:layout_marginTop="200dp"
             android:layout_marginEnd="50dp"

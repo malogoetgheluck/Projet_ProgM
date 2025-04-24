@@ -14,17 +14,19 @@
     <TextView
         android:layout_width="300dp"
         android:layout_height="150dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginStart="50dp"
         android:layout_marginTop="200dp"
         android:layout_marginEnd="50dp"
-        android:text="Uh-oh ! The enemies have discovered you !\nRun for the gate, and make sure to grab the treasures !"
+        android:background="#60D3D3D3"
         android:gravity="center"
+        android:padding="8dp"
+        android:radius="16dp"
+        android:text="Uh-oh ! The enemies have discovered you !\nRun for the gate, and make sure to grab the treasures !"
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:textStyle="bold"
-        android:background="#60D3D3D3"
-        android:radius="16dp"
-        android:padding="8dp"/>
+        android:textStyle="bold" />
 
     <FrameLayout
     android:id="@+id/gameLayout"
@@ -124,6 +126,8 @@
             android:id="@+id/scoreLayout"
             android:layout_width="300dp"
             android:layout_height="150dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
             android:layout_marginStart="50dp"
             android:layout_marginTop="200dp"
             android:layout_marginEnd="50dp"
