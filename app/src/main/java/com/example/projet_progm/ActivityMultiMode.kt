@@ -388,10 +388,10 @@ class ActivityMultiMode : ComponentActivity() {
         val allGames = listOf(
             QuestionnaireGameActivity::class.java,
             EnigmeActivity::class.java,
-            //ActivitySearchTheChest::class.java,
+            ActivitySearchTheChest::class.java,
             Player_VS_Enemy::class.java,
             ActivityMemento::class.java,
-            //ActivityFindTheObject::class.java
+            ActivityFindTheObject::class.java
         ).shuffled().take(3)
 
         selectedGames.clear()
