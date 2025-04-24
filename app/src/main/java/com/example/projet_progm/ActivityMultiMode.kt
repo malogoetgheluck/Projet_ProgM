@@ -59,18 +59,18 @@ class ActivityMultiMode : ComponentActivity() {
 
     private val REQUEST_ENABLE_BT = 1
     private val APP_UUID: UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66")
-
+    
     private val selectedGames = mutableListOf<Class<*>>()
     private var currentGameIndex = 0
     private var isGameSequenceRunning = false
     private val REQUEST_GAME_ACTIVITY = 1001
+  
     private var serverScore = 0
     private var clientScore = 0
     private var opponentCompleted = false
     private var myCompleted = false
     private var mediaPlayer: MediaPlayer? = null
     private val handler = Handler(Looper.getMainLooper())
-
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -111,7 +111,6 @@ class ActivityMultiMode : ComponentActivity() {
             scanButton.isEnabled = true
         }
         // Enregistrer le receiver pour les réponses de connexion
-
 
         startBluetoothMessageListener()
     }

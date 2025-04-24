@@ -90,9 +90,54 @@ class ActivityHomePage : ComponentActivity() {
         val intent = Intent(this, ActivityTrainingMode::class.java)
         startActivity(intent)
     }
+
     fun goToMultiMode(view: View?) {
         val intent = Intent(this, ActivityMultiMode::class.java)
         startActivity(intent)
+
+    fun openParameters(view: View){
+        if (parameterLayout.visibility == View.VISIBLE){
+            parameterLayout.visibility = View.GONE
+        } else {
+            parameterLayout.visibility = View.VISIBLE
+        }
+    }
+
+    fun closeParameters(view: View){
+        parameterLayout.visibility = View.GONE
+    }
+
+    fun leaveGame(view: View){
+        finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        musicPlayer.release()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        musicPlayer.resumeMusic()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        musicPlayer.pauseMusic()
+    }
+
+    fun resetHighscores(view: View) {
+        lifecycleScope.launch {
+            val db = AppDatabase.getDatabase(applicationContext)
+            val dao = db.userDao()
+
+            for (i in 1..6) {
+                val currentScore = dao.getHighScore(i)
+                if (currentScore != null) {
+                    dao.updateHighScore(i, 0)
+                }
+            }
+        }
     }
 
     fun openParameters(view: View){
