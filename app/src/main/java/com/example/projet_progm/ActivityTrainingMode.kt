@@ -14,11 +14,19 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ActivityTrainingMode : ComponentActivity() {
+    private lateinit var musicPlayer: MusicPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.trainingmodelayout)
 
+        musicPlayer = MusicPlayer(this)
+        musicPlayer.playMusic(R.raw.menupage)
+
+        updateScore()
+    }
+
+    fun updateScore(){
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -27,19 +35,16 @@ class ActivityTrainingMode : ComponentActivity() {
         val dao = db.userDao()
 
         lifecycleScope.launch {
-            // Fetch data from the database in a background thread
             try {
                 val games = dao.getAll()
 
-                // Check if data is fetched correctly
-                Log.d("DEBUG", "Games from DB: $games")
 
-                // If the list is empty, check your query and database
+                //Log.d("DEBUG", "Games from DB: $games")
+
                 if (games.isEmpty()) {
                     Log.d("DEBUG", "No games in the database!")
                 }
 
-                // Set up the adapter and pass the data to RecyclerView
                 val adapter = MyAdapter(games) { game ->
                     val intent = when (game.uid) {
                         1 -> Intent(this@ActivityTrainingMode, ActivitySearchTheChest::class.java)
@@ -53,12 +58,27 @@ class ActivityTrainingMode : ComponentActivity() {
                     startActivity(intent)
                 }
 
-                // Set the adapter for the RecyclerView
                 recyclerView.adapter = adapter
 
             } catch (e: Exception) {
                 Log.e("ERROR", "Error fetching games: ${e.message}")
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        musicPlayer.release()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        musicPlayer.resumeMusic()
+        updateScore()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        musicPlayer.pauseMusic()
     }
 }

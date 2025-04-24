@@ -1,69 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/gameLayout"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ActivityMultiMode">
-
-
+    android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/background"
+        android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/background"
-        android:scaleType="centerCrop" />
-    <!-- Joueur -->
-    <ImageView
-        android:id="@+id/player"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/player"
-        android:layout_margin="16dp"
-        android:layout_gravity="top|start" />
+        android:src="@drawable/ruins"
+        android:scaleType="centerCrop"/>
 
-    <ImageView
-        android:id="@+id/enemy1"
-        android:layout_width="69dp"
-        android:layout_height="60dp"
-        android:layout_marginLeft="250dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginRight="50dp"
-        android:src="@drawable/ennemi" />
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="50dp"
+        android:text="Uh-oh ! The enemies have discovered you !\nRun for the gate, and make sure to grab the treasures !"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="#60D3D3D3"
+        android:radius="16dp"
+        android:padding="8dp"/>
 
-    <ImageView
-        android:id="@+id/enemy2"
-        android:layout_width="69dp"
-        android:layout_height="60dp"
-        android:layout_marginLeft="00dp"
-        android:layout_marginTop="300dp"
-        android:src="@drawable/ennemi" />
+    <FrameLayout
+    android:id="@+id/gameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/gift1"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginLeft="300dp"
-        android:layout_marginTop="180dp"
-        android:layout_marginRight="50dp"
-        android:src="@drawable/gift" />
+        <ImageView
+            android:id="@+id/player"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="top|start"
+            android:layout_marginTop="800dp"
+            android:layout_marginStart="170dp"
+            android:src="@drawable/player" />
 
-    <ImageView
-        android:id="@+id/gift2"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginLeft="00dp"
-        android:layout_marginTop="380dp"
-        android:layout_marginRight="50dp"
-        android:src="@drawable/gift" />
+        <ImageView
+            android:id="@+id/enemy1"
+            android:layout_width="69dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="1000px"
+            android:layout_marginTop="2000px"
+            android:layout_marginRight="50dp"
+            android:src="@drawable/ennemi"
+            android:elevation="10dp"/>
 
-    <ImageView
-        android:id="@+id/door"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/door"
-        android:layout_marginTop="600dp"
-        android:layout_marginLeft="280dp"
-        />
-</FrameLayout>
+        <ImageView
+            android:id="@+id/enemy2"
+            android:layout_width="69dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="00dp"
+            android:layout_marginTop="300dp"
+            android:src="@drawable/ennemi"
+            android:elevation="10dp"/>
+
+        <ImageView
+            android:id="@+id/gift1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="300dp"
+            android:layout_marginTop="180dp"
+            android:src="@drawable/gift"
+            android:elevation="5dp"/>
+
+        <ImageView
+            android:id="@+id/gift2"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="00dp"
+            android:layout_marginTop="380dp"
+            android:src="@drawable/gift"
+            android:elevation="5dp"/>
+
+        <ImageView
+            android:id="@+id/gift3"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="200dp"
+            android:layout_marginTop="380dp"
+            android:src="@drawable/gift"
+            android:elevation="5dp"/>
+
+        <ImageView
+            android:id="@+id/door"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/door"
+            android:layout_gravity="top|start"
+            android:layout_marginTop="400dp"
+            android:layout_marginStart="170dp"
+            android:elevation="0dp"
+            />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/timerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="50dp"
+        android:text="Time: 60s"
+        android:textColor="#FF0000"
+        android:textSize="24sp" />
+
+
+    <RelativeLayout
+        android:id="@+id/parentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/scoreLayout"
+            android:layout_width="300dp"
+            android:layout_height="150dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="200dp"
+            android:layout_marginEnd="50dp"
+            android:background="@drawable/rectanglebox"
+            android:gravity="center"
+            android:padding="35dp">
+
+            <TextView
+                android:id="@+id/welldoneTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center"
+                android:text="Well done"
+                android:textColor="#000000"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/scoreTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:text="Score: 0"
+                android:textColor="#000000"
+                android:textSize="24sp" />
+        </FrameLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

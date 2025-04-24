@@ -21,11 +21,11 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.Math.toDegrees
-import java.lang.Thread.sleep
 import kotlin.math.abs
 import kotlin.math.atan2
 
 class ActivitySearchTheChest : ComponentActivity() {
+    private lateinit var musicPlayer: MusicPlayer
 
     private var startX = 0f
     private var startY = 0f
@@ -48,7 +48,7 @@ class ActivitySearchTheChest : ComponentActivity() {
     private val endGame = object : Runnable {
         override fun run() {
             val resultIntent = Intent()
-            resultIntent.putExtra("score", score)
+            resultIntent.putExtra("score", score.toInt())
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }
@@ -58,6 +58,11 @@ class ActivitySearchTheChest : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.searchthechestlayout)
+
+        musicPlayer = MusicPlayer(this)
+        musicPlayer.playMusic(R.raw.minigame)
+        musicPlayer.loadSound("success", R.raw.success)
+        musicPlayer.loadSound("failure", R.raw.gameover)
 
         val parentLayout = findViewById<RelativeLayout>(R.id.parentLayout)
 
@@ -116,7 +121,7 @@ class ActivitySearchTheChest : ComponentActivity() {
         val angle = toDegrees(atan2(-deltaY, deltaX).toDouble()).toFloat()
 
         val normalizedAngle = if (angle < 0) angle + 360 else angle
-        val tolerance = 15f // Allow slight variation
+        val tolerance = 20f // Allow slight variation
 
         //Log.d("DEBUG", "Swipe at ${normalizedAngle.toInt()}° detected!")
         //Log.d("DEBUG",objectList.last().angle.toString())
@@ -149,14 +154,18 @@ class ActivitySearchTheChest : ComponentActivity() {
         scoreLayout.visibility = View.VISIBLE
         if (win){
             welldoneTextView.text = "Well done"
+
+            musicPlayer.playSound("success")
         } else {
             welldoneTextView.text = "Another time ?"
             clearList()
             score = 0
+
+            musicPlayer.playSound("failure")
         }
         scoreTextView.text = "Score: "+score
 
-        Log.d("DEBUG", "The score is $score")
+        //Log.d("DEBUG", "The score is $score")
 
         val db = AppDatabase.getDatabase(applicationContext)
         val dao = db.userDao()
@@ -193,5 +202,6 @@ class ActivitySearchTheChest : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         countDownTimer?.cancel()
+        musicPlayer.release()
     }
 }

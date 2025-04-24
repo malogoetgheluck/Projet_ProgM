@@ -20,12 +20,9 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.Math.toDegrees
-import java.lang.Thread.sleep
-import kotlin.math.abs
-import kotlin.math.atan2
 
 class ActivityMemento : ComponentActivity() {
+    private lateinit var musicPlayer: MusicPlayer
 
     private var objectList: ArrayList<MementoObjects> = ArrayList()
 
@@ -49,7 +46,7 @@ class ActivityMemento : ComponentActivity() {
     private val endGame = object : Runnable {
         override fun run() {
             val resultIntent = Intent()
-            resultIntent.putExtra("score", score)
+            resultIntent.putExtra("score", score.toInt())
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }
@@ -58,7 +55,12 @@ class ActivityMemento : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.searchthechestlayout)
+        setContentView(R.layout.mementolayout)
+
+        musicPlayer = MusicPlayer(this)
+        musicPlayer.playMusic(R.raw.minigame)
+        musicPlayer.loadSound("success", R.raw.success)
+        musicPlayer.loadSound("failure", R.raw.gameover)
 
         val parentLayout = findViewById<RelativeLayout>(R.id.parentLayout)
 
@@ -195,9 +197,13 @@ class ActivityMemento : ComponentActivity() {
         scoreLayout.visibility = View.VISIBLE
         if (win){
             welldoneTextView.text = "Well done"
+
+            musicPlayer.playSound("success")
         } else {
             welldoneTextView.text = "Another time ?"
             score = 0
+
+            musicPlayer.playSound("failure")
         }
         scoreTextView.text = "Score: "+score
 
@@ -238,5 +244,6 @@ class ActivityMemento : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         countDownTimer?.cancel()
+        musicPlayer.release()
     }
 }
