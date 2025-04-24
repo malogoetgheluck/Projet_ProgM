@@ -41,7 +41,7 @@ class ActivityHomePage : ComponentActivity() {
                 uid = 1,
                 gameName = "Remove the weapon",
                 gameActivity = "SearchTheChest",
-                highScore = null
+                highScore = 0
             )
             userDao.insertAll(newGame)
 
@@ -49,7 +49,7 @@ class ActivityHomePage : ComponentActivity() {
                 uid = 2,
                 gameName = "Find the object",
                 gameActivity = "FindTheObject",
-                highScore = null
+                highScore = 0
             )
             userDao.insertAll(newGame)
 
@@ -57,7 +57,7 @@ class ActivityHomePage : ComponentActivity() {
                 uid = 3,
                 gameName = "Riddles",
                 gameActivity = "EnigmeActivity",
-                highScore = null
+                highScore = 0
             )
             userDao.insertAll(newGame)
 
@@ -65,7 +65,7 @@ class ActivityHomePage : ComponentActivity() {
                 uid = 4,
                 gameName = "Dodge the enemies",
                 gameActivity = "Player_VS_Enemy",
-                highScore = null
+                highScore = 0
             )
             userDao.insertAll(newGame)
 
@@ -73,7 +73,7 @@ class ActivityHomePage : ComponentActivity() {
                 uid = 5,
                 gameName = "Questions",
                 gameActivity = "QuestionnaireGameActivity",
-                highScore = null
+                highScore = 0
             )
             userDao.insertAll(newGame)
 
@@ -81,7 +81,7 @@ class ActivityHomePage : ComponentActivity() {
                 uid = 6,
                 gameName = "Memento",
                 gameActivity = "MementoActivity",
-                highScore = null
+                highScore = 0
             )
             userDao.insertAll(newGame)
 
